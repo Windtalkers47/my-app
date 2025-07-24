@@ -3,12 +3,10 @@ import axios from 'axios';
 
 import { encryptPassword } from '../../utils/encrypt';
 
-import CryptoJS from 'crypto-js';
-
 // Props ไป Navbar
 interface Props {
   onClose: () => void;
-  onLoginSuccess: () => void;
+  onLoginSuccess: (role: string) => void;
 }
 
 export default function LoginModal({ onClose, onLoginSuccess }: Props) {
@@ -25,16 +23,18 @@ export default function LoginModal({ onClose, onLoginSuccess }: Props) {
     const res = await axios.post('/api/login', {
       email: email,
       password: encryptedPassword
+      
     });
 
     localStorage.setItem('token', res.data.token); // ✅ save token
+    localStorage.setItem('role', res.data.user.role); // ✅ save role
+
+    onLoginSuccess(res.data.user.role); // ส่ง Role กลับ
 
     alert('Login successful');
-    onLoginSuccess(); // เรียกปิด modal จาก props
     setStep('login');
     setEmail('');
     setPassword('');
-    window.location.reload();
   } catch (error) {
     alert('Login failed');
     console.error(error);
@@ -58,9 +58,10 @@ export default function LoginModal({ onClose, onLoginSuccess }: Props) {
     });
 
     localStorage.setItem('token', res.data.token); // ✅ save token
+    localStorage.setItem('role', res.data.role);   // ✅ save role
 
     alert('Registered successfully');
-    onLoginSuccess(); // ✅ close modal
+    onLoginSuccess(res.data.role); // ✅ close modal
     setStep('login');
     setEmail('');
     setPassword('');
