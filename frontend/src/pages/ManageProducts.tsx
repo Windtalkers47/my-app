@@ -44,27 +44,46 @@ export default function ManageProducts() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const fetchProducts = async () => {
-    try {
-      const res = await axios.get('/api/products');
-      setProducts(res.data);
-    } catch (err) {
-      console.error('Error fetching products', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const token = localStorage.getItem('token');
 
-  const deleteProduct = async (id: number) => {
-    if (!window.confirm('Are you sure you want to delete this product?')) return;
+const fetchProducts = async () => {
+  try {
+    const res = await axios.get('/api/products');
 
-    try {
-      await axios.delete(`/api/products/${id}`);
-      setProducts(products.filter(p => p.id !== id));
-    } catch (err) {
-      console.error('Error deleting product', err);
-    }
-  };
+    // Normalize product_id → id
+    const normalized = res.data.map((p: any) => ({
+      ...p,
+      id: p.product_id ?? p.id, // fallback
+    }));
+
+    setProducts(normalized);
+  } catch (err) {
+    console.error('Error fetching products', err);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+const deleteProduct = async (id: number) => {
+  if (!window.confirm('Are you sure you want to delete this product?')) return;
+
+   // or however you store it
+
+  try {
+    await axios.delete(`/api/products/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    setProducts(products.filter(p => p.id !== id));
+  } catch (err) {
+    console.error('Error deleting product', err);
+    alert('Failed to delete product');
+  }
+};
+
 
   const editProduct = (product: Product) => {
     setEditingProduct(product);
