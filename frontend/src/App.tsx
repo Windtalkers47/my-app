@@ -10,6 +10,7 @@ import TableBooking from './pages/TableBooking';
 import ManageProducts from './pages/ManageProducts';
 
 import ProtectedRoute from './components/ProtectedRoute';
+import ProductList from './pages/ProductList';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/products" element={<ProductList />} />
 
         {/* Admin Only */}
         <Route

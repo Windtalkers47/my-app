@@ -3,7 +3,7 @@ import { body } from 'express-validator';
 import { register, login, forgotPassword, resetPassword } from '../controllers/authController';
 import { authenticateToken } from '../middleware/authMiddleware';
 
-import { requireRole } from '../middleware/roleMiddleware';
+import { authorizeRoles } from '../middleware/roleMiddleware';
 
 const router = express.Router();
 
@@ -24,7 +24,7 @@ router.get('/me', authenticateToken, (req, res) => {
   res.json({ message: 'You are authenticated', user });
 });
 
-router.get('/admin-only', authenticateToken, requireRole('admin'), (req, res) => {
+router.get('/admin-only', authenticateToken, authorizeRoles('admin'), (req, res) => {
   res.send('Welcome, admin');
 });
 

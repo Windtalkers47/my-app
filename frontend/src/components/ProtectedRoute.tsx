@@ -4,7 +4,7 @@ import { JSX } from 'react';
 
 interface ProtectedRouteProps {
   children: JSX.Element;
-  allowedRoles: string[]; // e.g. ['admin']
+  allowedRoles: string[]; // e.g. ['admin', 'customer']
 }
 
 const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
