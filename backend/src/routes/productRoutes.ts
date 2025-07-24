@@ -13,7 +13,6 @@ const router = express.Router();
 
 router.get('/', getProducts);
 router.get('/:id', getProductById);
-
 router.post('/', authenticateToken, authorizeRoles('admin'), createProduct);
 router.put('/:id', authenticateToken, authorizeRoles('admin'), updateProduct);
 router.delete('/:id', authenticateToken, authorizeRoles('admin'), deleteProduct);
