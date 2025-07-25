@@ -11,6 +11,7 @@ import ManageProducts from './pages/ManageProducts';
 
 import ProtectedRoute from './components/ProtectedRoute';
 import ProductList from './pages/ProductList';
+import Checkout from './pages/Checkout';
 
 function App() {
   return (
@@ -58,6 +59,13 @@ function App() {
               <TableBooking />
             </ProtectedRoute>
           }
+        />
+        <Route path="/checkout/:cartId"
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'customer']}>
+              <Checkout />
+            </ProtectedRoute>
+        }
         />
       </Routes>
     </>

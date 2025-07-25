@@ -5,6 +5,8 @@ import ProductCard from '../components/ProductCard';
 import ProductCreateModal from '../components/modal/ProductCreateModal';
 import ProductUpdateModal from '../components/modal/ProductUpdateModal';
 
+import Navbar from '../components/Navbar';
+
 interface Product {
   id: number;
   name: string;
@@ -83,6 +85,7 @@ const deleteProduct = async (id: number) => {
   return (
     <div className="pt-20 px-6">
       {/* <h2 className="text-2xl font-bold mb-4">Manage Products</h2> */}
+      <Navbar />
 
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Manage Products</h2>

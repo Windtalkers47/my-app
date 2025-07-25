@@ -46,7 +46,7 @@ const handleLoginSuccess = (role: string) => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
-    localStorage.removeItem('user');
+    localStorage.removeItem('user_id');
     setLoggedIn(false);
     setRole(null);
   };
@@ -69,6 +69,7 @@ const renderLinks = () => {
       { to: '/', label: 'Home' },
       { to: '/admin-dashboard', label: 'Admin Dashboard' },
       { to: '/manage-products', label: 'Manage Products' },
+      { to: '/products', label: 'Products' },
       { to: '/cart', label: 'Cart' },
       { to: '/table-booking', label: 'Table Booking' },
       ...secondaryLinks
@@ -78,6 +79,7 @@ const renderLinks = () => {
   if (role === 'customer') {
     return [
       { to: '/', label: 'Home' },
+      { to: '/products', label: 'Products' },
       { to: '/cart', label: 'Cart' },
       { to: '/table-booking', label: 'Table Booking' },
       ...secondaryLinks

@@ -28,6 +28,7 @@ export default function LoginModal({ onClose, onLoginSuccess }: Props) {
 
     localStorage.setItem('token', res.data.token); // ✅ save token
     localStorage.setItem('role', res.data.user.role); // ✅ save role
+    localStorage.setItem('user_id', res.data.user.id); // เอาไว้ใช้ตอนเลือกสินค้า
 
     onLoginSuccess(res.data.user.role); // ส่ง Role กลับ
 
@@ -59,6 +60,7 @@ export default function LoginModal({ onClose, onLoginSuccess }: Props) {
 
     localStorage.setItem('token', res.data.token); // ✅ save token
     localStorage.setItem('role', res.data.role);   // ✅ save role
+    localStorage.setItem('user_id', res.data.user.id);
 
     alert('Registered successfully');
     onLoginSuccess(res.data.role); // ✅ close modal

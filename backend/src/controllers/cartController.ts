@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import db from '../utils/db'; // Your MySQL connection
+import db from '../utils/db';
 
-// POST /api/cart
+// POST /api/cart สร้างตระกร้า
 export const createCart = async (req: Request, res: Response) => {
   const { user_id } = req.body;
   try {
@@ -16,7 +16,7 @@ export const createCart = async (req: Request, res: Response) => {
   }
 };
 
-// POST /api/cart/:cartId/items
+// POST /api/cart/:cartId/items เพิ่มสินค้าลงตระกร้า
 export const addItemToCart = async (req: Request, res: Response) => {
   const { cartId } = req.params;
   const { product_id, quantity, price } = req.body;
@@ -31,7 +31,7 @@ export const addItemToCart = async (req: Request, res: Response) => {
   }
 };
 
-// GET /api/cart/:userId
+// GET /api/cart/:userId ดึงตะกร้าของผู้ใช้
 export const getCartByUserId = async (req: Request, res: Response) => {
   const { userId } = req.params;
   try {
@@ -47,7 +47,7 @@ export const getCartByUserId = async (req: Request, res: Response) => {
   }
 };
 
-// PUT /api/cart/:cartId/items/:itemId
+// PUT /api/cart/:cartId/items/:itemId อัปเดตจำนวนสินค้าในตะกร้า
 export const updateCartItem = async (req: Request, res: Response) => {
   const { cartId, itemId } = req.params;
   const { quantity } = req.body;
@@ -63,7 +63,7 @@ export const updateCartItem = async (req: Request, res: Response) => {
   }
 };
 
-// DELETE /api/cart/:cartId/items/:itemId
+// DELETE /api/cart/:cartId/items/:itemId ลบสินค้าออกจากตะกร้า
 export const deleteCartItem = async (req: Request, res: Response) => {
   const { cartId, itemId } = req.params;
   try {
@@ -74,7 +74,7 @@ export const deleteCartItem = async (req: Request, res: Response) => {
   }
 };
 
-// POST /api/cart/:cartId/checkout
+// POST /api/cart/:cartId/checkout ทำการชำระเงิน (รวมกับ QR Payment)
 export const checkoutCart = async (req: Request, res: Response) => {
   const { cartId } = req.params;
   try {
@@ -82,5 +82,40 @@ export const checkoutCart = async (req: Request, res: Response) => {
     res.json({ message: 'Checkout complete (You can now generate QR)' });
   } catch (err) {
     res.status(500).json({ message: 'Failed to checkout', error: err });
+  }
+};
+
+
+// POST /api/cart/add-item → ใช้ user_id เพื่อเพิ่มสินค้าลงตะกร้า
+export const addItemToUserCart = async (req: Request, res: Response) => {
+  const { user_id, product_id, quantity } = req.body;
+
+  try {
+    // 1. Check or create active cart
+    const [existing] = await db.query('SELECT * FROM cart WHERE user_id = ? AND status = "active"', [user_id]);
+    let cartId;
+
+    if ((existing as any).length > 0) {
+      cartId = (existing as any)[0].cart_id;
+    } else {
+      const [createResult] = await db.query('INSERT INTO cart (user_id) VALUES (?)', [user_id]);
+      cartId = (createResult as any).insertId;
+    }
+
+    // 2. Get product price
+    const [productRows] = await db.query('SELECT price FROM products WHERE product_id = ?', [product_id]);
+    if ((productRows as any).length === 0) return res.status(404).json({ message: 'Product not found' });
+
+    const price = (productRows as any)[0].price;
+
+    // 3. Add item
+    await db.query(
+      'INSERT INTO cart_items (cart_id, product_id, quantity, price) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE quantity = quantity + ?',
+      [cartId, product_id, quantity, price, quantity]
+    );
+
+    res.json({ message: 'Item added to cart', cartId });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to add item', error: err });
   }
 };
