@@ -1,28 +1,8 @@
-// import { useEffect } from 'react';
-// import { useNavigate } from 'react-router-dom';
-
-// export default function ManageProducts() {
-//   const navigate = useNavigate();
-//   const role = localStorage.getItem('role');
-
-//   useEffect(() => {
-//     if (role !== 'admin') {
-//       navigate('/');
-//     }
-//   }, [role, navigate]);
-
-//   return (
-//     <div className="pt-20">
-//       <h2>Admin: Manage Products</h2>
-//     </div>
-//   );
-// }
-
-
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ProductCard from '../components/ProductCard';
+import ProductCreateModal from '../components/modal/ProductCreateModal';
 import ProductUpdateModal from '../components/modal/ProductUpdateModal';
 
 interface Product {
@@ -40,6 +20,8 @@ export default function ManageProducts() {
 
   const navigate = useNavigate();
   const role = localStorage.getItem('role');
+
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -100,7 +82,18 @@ const deleteProduct = async (id: number) => {
 
   return (
     <div className="pt-20 px-6">
-      <h2 className="text-2xl font-bold mb-4">Manage Products</h2>
+      {/* <h2 className="text-2xl font-bold mb-4">Manage Products</h2> */}
+
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold">Manage Products</h2>
+        <button
+          className="bg-green-600 text-white px-4 py-2 rounded"
+          onClick={() => setIsCreateModalOpen(true)}
+        >
+          + Add Product
+        </button>
+      </div>
+
 
       {loading ? (
         <p>Loading...</p>
@@ -128,6 +121,14 @@ const deleteProduct = async (id: number) => {
           onUpdated={fetchProducts}
         />
       )}
+
+      {isCreateModalOpen && (
+        <ProductCreateModal
+          onClose={() => setIsCreateModalOpen(false)}
+          onCreated={fetchProducts}
+        />
+      )}
+
 
     </div>
   );

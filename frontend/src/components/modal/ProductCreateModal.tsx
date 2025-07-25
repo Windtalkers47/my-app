@@ -1,36 +1,24 @@
 import { useState } from 'react';
 import axios from 'axios';
 
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  image: string | null;
-  stock: number;
-}
-
 interface Props {
-  product: Product;
   onClose: () => void;
-  onUpdated: () => void;
+  onCreated: () => void;
 }
 
-export default function ProductUpdateModal({ product, onClose, onUpdated }: Props) {
-const [formData, setFormData] = useState<Product>({
-  id: product.id ?? (product as any).product_id,
-  name: product.name,
-  description: product.description,
-  price: Number(product.price),
-  image: product.image,
-  stock: product.stock,
-});
+export default function ProductCreateModal({ onClose, onCreated }: Props) {
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    price: 0,
+    image: '',
+    stock: 0,
+  });
 
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-
     setFormData(prev => ({
       ...prev,
       [name]: name === 'price' || name === 'stock' ? Number(value) : value,
@@ -43,26 +31,20 @@ const [formData, setFormData] = useState<Product>({
 
     try {
       const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('User not authenticated');
-      }
+      if (!token) throw new Error('Not authenticated');
 
-      await axios.put(
-        `/api/products/${formData.id}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      await axios.post('/api/products', formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
 
-      onUpdated();
+      onCreated();
       onClose();
     } catch (err) {
-      console.error('Error updating product:', err);
-      alert('Failed to update product');
+      console.error('Create product error:', err);
+      alert('Failed to create product');
     } finally {
       setLoading(false);
     }
@@ -70,62 +52,60 @@ const [formData, setFormData] = useState<Product>({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-      <div className="bg-white p-6 w-full max-w-md shadow-lg rounded-xl overflow-hidden hover:scale-105 transition">
-        <h2 className="text-xl font-bold mb-4">Edit Product</h2>
+      <div className="bg-white p-6 w-full max-w-md shadow-lg rounded-xl hover:scale-105 transition">
+        <h2 className="text-xl font-bold mb-4">Create Product</h2>
         <form onSubmit={handleSubmit} className="space-y-3">
           <input
-            type="text"
             name="name"
             value={formData.name}
             onChange={handleChange}
             placeholder="Name"
-            className="w-full border p-2 rounded"
             required
+            className="w-full border p-2 rounded"
           />
           <textarea
             name="description"
             value={formData.description}
             onChange={handleChange}
             placeholder="Description"
-            className="w-full border p-2 rounded"
             required
+            className="w-full border p-2 rounded"
           />
           <input
-            type="number"
             name="price"
+            type="number"
             value={formData.price}
             onChange={handleChange}
             placeholder="Price"
-            className="w-full border p-2 rounded"
             required
-          />
-          <input
-            type="text"
-            name="image"
-            value={formData.image ?? ''}
-            onChange={handleChange}
-            placeholder="Image URL"
             className="w-full border p-2 rounded"
           />
           <input
-            type="number"
+            name="image"
+            value={formData.image}
+            onChange={handleChange}
+            placeholder="Image URL (optional)"
+            className="w-full border p-2 rounded"
+          />
+          <input
             name="stock"
+            type="number"
             value={formData.stock}
             onChange={handleChange}
             placeholder="Stock"
-            className="w-full border p-2 rounded"
             required
+            className="w-full border p-2 rounded"
           />
           <div className="flex justify-end gap-2 pt-2">
-            <button type="button" onClick={onClose} className="px-4 py-2 rounded bg-gray-300">
+            <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-300 rounded">
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded bg-blue-600 text-white"
+              className="px-4 py-2 bg-green-600 text-white rounded"
               disabled={loading}
             >
-              {loading ? 'Updating...' : 'Update'}
+              {loading ? 'Creating...' : 'Create'}
             </button>
           </div>
         </form>
