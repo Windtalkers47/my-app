@@ -25,7 +25,6 @@ export const handleGetAllBookings = async (_req: Request, res: Response) => {
     const bookings = await getAllBookings();
     res.status(200).json(bookings);
   } catch (err) {
-    console.error('❌ Error in handleGetAllBookings:', err);
     res.status(500).json({ error: 'Failed to fetch all bookings' });
   }
 };
