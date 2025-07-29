@@ -2,18 +2,49 @@ import db from '../utils/db';
 
 export const createBooking = async (
   userId: number,
+  tableId: number,
   bookingDate: string,
   bookingTime: string,
   numberOfPeople: number,
   specialRequest?: string
 ) => {
-  const [result] = await db.execute(
-    `INSERT INTO table_bookings (user_id, booking_date, booking_time, number_of_people, special_request)
-     VALUES (?, ?, ?, ?, ?)`,
-    [userId, bookingDate, bookingTime, numberOfPeople, specialRequest || null]
+  const SPARE_CHAIRS = 6; // เก้าอี้สำรอง มี 6 ตัว
+
+  // Check ว่ามีโต๊ะจริงมั้ย
+  const [tableResult] = await db.query('SELECT * FROM tables WHERE table_id = ?', [tableId]);
+  const table = (tableResult as any[])[0];
+
+  if (!table) {
+    throw new Error('Table does not exist.');
+  }
+
+  const maxAvailableSeats = table.seats + SPARE_CHAIRS;
+
+  // Check จำนวนที่นั่ง มากกว่าที่มีในโต๊ะหรือป่าว
+  if (numberOfPeople > maxAvailableSeats) {
+    throw new Error(`Table ${tableId} cannot accommodate ${numberOfPeople} people. Maximum with spare chairs is ${maxAvailableSeats}.`);
+  }
+
+  // Check ว่ามีการจองซ้ำกันมั้ย
+  const [existingBooking] = await db.query(
+    `SELECT * FROM table_bookings 
+     WHERE table_id = ? AND booking_date = ? AND booking_time = ? AND status IN ('pending', 'confirmed')`,
+    [tableId, bookingDate, bookingTime]
   );
+
+  if ((existingBooking as any[]).length > 0) {
+    throw new Error('Table already booked for this date and time.');
+  }
+
+  const [result] = await db.execute(
+    `INSERT INTO table_bookings (user_id, table_id, booking_date, booking_time, number_of_people, special_request)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [userId, tableId, bookingDate, bookingTime, numberOfPeople, specialRequest || null]
+  );
+
   return result;
 };
+
 
 export const getUserBookings = async (userId: number) => {
   const [rows] = await db.execute(
@@ -23,25 +54,35 @@ export const getUserBookings = async (userId: number) => {
   return rows;
 };
 
-// Update a booking
 export const updateBooking = async (
   bookingId: number,
   userId: number,
+  tableId: number,
   bookingDate: string,
   bookingTime: string,
   numberOfPeople: number,
   specialRequest?: string
 ) => {
+  const [existingBooking] = await db.query(
+    `SELECT * FROM table_bookings 
+     WHERE table_id = ? AND booking_date = ? AND booking_time = ? AND table_booking_id != ? AND status IN ('pending', 'confirmed')`,
+    [tableId, bookingDate, bookingTime, bookingId]
+  );
+
+  // ดักการจองซ้ำ
+  if ((existingBooking as any[]).length > 0) {
+    throw new Error('Table already booked for this date and time.');
+  }
+
   const [result] = await db.execute(
     `UPDATE table_bookings
-     SET booking_date = ?, booking_time = ?, number_of_people = ?, special_request = ?
+     SET table_id = ?, booking_date = ?, booking_time = ?, number_of_people = ?, special_request = ?
      WHERE table_booking_id = ? AND user_id = ?`,
-    [bookingDate, bookingTime, numberOfPeople, specialRequest || null, bookingId, userId]
+    [tableId, bookingDate, bookingTime, numberOfPeople, specialRequest || null, bookingId, userId]
   );
   return result;
 };
 
-// Cancel a booking
 export const cancelBooking = async (bookingId: number, userId: number) => {
   const [result] = await db.execute(
     `UPDATE table_bookings SET status = 'cancelled' WHERE table_booking_id = ? AND user_id = ?`,
@@ -50,3 +91,30 @@ export const cancelBooking = async (bookingId: number, userId: number) => {
   return result;
 };
 
+export const getAllBookings = async () => {
+  const [rows] = await db.query(`
+    SELECT tb.*, u.user_name AS userName, t.table_number, t.seats AS seat_capacity
+    FROM table_bookings tb
+    JOIN users u ON tb.user_id = u.user_id
+    JOIN tables t ON tb.table_id = t.table_id
+    ORDER BY tb.booking_date DESC, tb.booking_time DESC
+  `);
+  return rows;
+};
+
+
+export const listAvailableTables = async (bookingDate: string, bookingTime: string) => {
+  const [unavailableTables] = await db.query(
+    `SELECT table_id FROM table_bookings
+     WHERE booking_date = ? AND booking_time = ? AND status IN ('pending', 'confirmed')`,
+    [bookingDate, bookingTime]
+  );
+
+  const unavailableIds = (unavailableTables as any[]).map(row => row.table_id);
+  const [availableTables] = await db.query(
+    `SELECT * FROM tables WHERE table_id NOT IN (?)`,
+    [unavailableIds.length ? unavailableIds : [0]]
+  );
+
+  return availableTables;
+};

@@ -1,15 +1,47 @@
 import { Request, Response } from 'express';
-import { createBooking, getUserBookings, updateBooking, cancelBooking } from '../models/bookingModel';
+import {
+  createBooking,
+  getUserBookings,
+  updateBooking,
+  cancelBooking,
+  getAllBookings,
+  listAvailableTables
+} from '../models/bookingModel';
 
 export const handleCreateBooking = async (req: Request, res: Response) => {
-  const { bookingDate, bookingTime, numberOfPeople, specialRequest } = req.body;
+  const { tableId, bookingDate, bookingTime, numberOfPeople, specialRequest } = req.body;
   const userId = (req as any).user.id;
 
   try {
-    const booking = await createBooking(userId, bookingDate, bookingTime, numberOfPeople, specialRequest);
+    const booking = await createBooking(userId, tableId, bookingDate, bookingTime, numberOfPeople, specialRequest);
     res.status(201).json({ message: 'Booking created successfully', booking });
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+export const handleGetAllBookings = async (_req: Request, res: Response) => {
+  try {
+    const bookings = await getAllBookings();
+    res.status(200).json(bookings);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to create booking' });
+    console.error('❌ Error in handleGetAllBookings:', err);
+    res.status(500).json({ error: 'Failed to fetch all bookings' });
+  }
+};
+
+export const handleListAvailableTables = async (req: Request, res: Response) => {
+  const { bookingDate, bookingTime } = req.query;
+
+  if (!bookingDate || !bookingTime) {
+    return res.status(400).json({ error: 'Missing bookingDate or bookingTime' });
+  }
+
+  try {
+    const tables = await listAvailableTables(bookingDate as string, bookingTime as string);
+    res.status(200).json(tables);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch available tables' });
   }
 };
 
@@ -28,10 +60,12 @@ export const handleGetMyBookings = async (req: Request, res: Response) => {
 export const handleUpdateBooking = async (req: Request, res: Response) => {
   const bookingId = parseInt(req.params.id);
   const userId = (req as any).user.id;
-  const { bookingDate, bookingTime, numberOfPeople, specialRequest } = req.body;
+  const { tableId, bookingDate, bookingTime, numberOfPeople, specialRequest } = req.body;
+
+  if (!tableId) return res.status(400).json({ error: 'Missing tableId' });
 
   try {
-    const result = await updateBooking(bookingId, userId, bookingDate, bookingTime, numberOfPeople, specialRequest);
+    const result = await updateBooking(bookingId, userId, tableId, bookingDate, bookingTime, numberOfPeople, specialRequest);
     res.status(200).json({ message: 'Booking updated successfully', result });
   } catch (err) {
     res.status(500).json({ error: 'Failed to update booking' });
@@ -42,6 +76,8 @@ export const handleUpdateBooking = async (req: Request, res: Response) => {
 export const handleCancelBooking = async (req: Request, res: Response) => {
   const bookingId = parseInt(req.params.id);
   const userId = (req as any).user.id;
+
+  // เหลือ Check ว่ามีโต๊ะที่จองอยู่หรือไม่
 
   try {
     const result = await cancelBooking(bookingId, userId);
