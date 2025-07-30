@@ -56,7 +56,7 @@ export const handleGetMyBookings = async (req: Request, res: Response) => {
   }
 };
 
-// Update handler
+// Update
 export const handleUpdateBooking = async (req: Request, res: Response) => {
   const bookingId = parseInt(req.params.id);
   const userId = (req as any).user.id;
@@ -72,7 +72,7 @@ export const handleUpdateBooking = async (req: Request, res: Response) => {
   }
 };
 
-// Cancel handler
+// Cancel
 export const handleCancelBooking = async (req: Request, res: Response) => {
   const bookingId = parseInt(req.params.id);
   const userId = (req as any).user.id;
