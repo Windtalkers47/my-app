@@ -102,7 +102,6 @@ export const getAllBookings = async () => {
   return rows;
 };
 
-
 export const listAvailableTables = async (bookingDate: string, bookingTime: string) => {
   const [unavailableTables] = await db.query(
     `SELECT table_id FROM table_bookings
@@ -111,10 +110,37 @@ export const listAvailableTables = async (bookingDate: string, bookingTime: stri
   );
 
   const unavailableIds = (unavailableTables as any[]).map(row => row.table_id);
-  const [availableTables] = await db.query(
-    `SELECT * FROM tables WHERE table_id NOT IN (?)`,
-    [unavailableIds.length ? unavailableIds : [0]]
-  );
 
+  let query = `SELECT * FROM tables`;
+  let params: any[] = [];
+
+  if (unavailableIds.length > 0) {
+    const placeholders = unavailableIds.map(() => '?').join(',');
+    query += ` WHERE table_id NOT IN (${placeholders})`;
+    params = unavailableIds;
+  }
+
+  const [availableTables] = await db.query(query, params);
   return availableTables;
 };
+
+
+export const getTablesWithAvailability = async (bookingDate: string, bookingTime: string) => {
+  const [allTables] = await db.query(`SELECT * FROM tables`);
+
+  const [bookedTables] = await db.query(
+    `SELECT table_id FROM table_bookings
+     WHERE booking_date = ? AND booking_time = ? AND status IN ('pending', 'confirmed')`,
+    [bookingDate, bookingTime]
+  );
+
+  const bookedIds = (bookedTables as any[]).map(row => row.table_id);
+
+  const tablesWithStatus = (allTables as any[]).map(table => ({
+    ...table,
+    isBooked: bookedIds.includes(table.table_id),
+  }));
+
+  return tablesWithStatus;
+};
+

@@ -5,7 +5,8 @@ import {
   updateBooking,
   cancelBooking,
   getAllBookings,
-  listAvailableTables
+  listAvailableTables,
+  getTablesWithAvailability
 } from '../models/bookingModel';
 
 export const handleCreateBooking = async (req: Request, res: Response) => {
@@ -83,5 +84,22 @@ export const handleCancelBooking = async (req: Request, res: Response) => {
     res.status(200).json({ message: 'Booking cancelled successfully', result });
   } catch (err) {
     res.status(500).json({ error: 'Failed to cancel booking' });
+  }
+};
+
+// สำหรับไว้โชว์โต๊ะให้เลือกจอง
+export const getAvailableTables = async (req: Request, res: Response) => {
+  try {
+    const { date, time } = req.query;
+
+    if (!date || !time) {
+      return res.status(400).json({ error: "Missing date or time" });
+    }
+
+    const tables = await getTablesWithAvailability(date as string, time as string);
+    res.json(tables);
+  } catch (err) {
+    console.error("Error getting available tables:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };

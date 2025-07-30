@@ -188,23 +188,30 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
+
+// จัด Model ไว้ยิง API
+type Table = {
+  table_id: number;
+  table_number: string;
+  seats: number;
+  isBooked: boolean;
+};
+
 const TableBooking = () => {
   const [bookingDate, setBookingDate] = useState('');
   const [timeSlot, setTimeSlot] = useState('');
-  const [selectedTable, setSelectedTable] = useState<string | null>(null);
-  const [availableTables, setAvailableTables] = useState<number[]>([]);
+  const [selectedTable, setSelectedTable] = useState<number | null>(null);
+  const [tables, setTables] = useState<Table[]>([]);
 
-  const tables = Array.from({ length: 10 }, (_, i) => `T${i + 1}`);
-  const timeSlots = ['18:00', '19:00', '20:00', '21:00', '22:00', '23:00',];
+  const timeSlots = ['18:00', '19:00', '20:00', '21:00', '22:00', '23:00'];
 
-  const handleTableClick = (table: string) => {
-    const tableId = parseInt(table.replace('T', ''));
-    if (!availableTables.includes(tableId)) return; // prevent selecting unavailable table
-    setSelectedTable(table);
+  const handleTableClick = (tableId: number, isBooked: boolean) => {
+    if (isBooked) return; // ป้องกันกดเลือกตัวที่ถูกจองไว้
+    setSelectedTable(tableId);
   };
 
   const handleBooking = async () => {
-    if (!bookingDate || !timeSlot || !selectedTable) {
+    if (!bookingDate || !timeSlot || selectedTable === null) {
       toast.error('Please select date, time, and table');
       return;
     }
@@ -215,7 +222,8 @@ const TableBooking = () => {
         {
           bookingDate,
           bookingTime: timeSlot,
-          tableNumber: selectedTable,
+          tableId: selectedTable,
+          numberOfPeople: 2,
         },
         { withCredentials: true }
       );
@@ -226,42 +234,41 @@ const TableBooking = () => {
     }
   };
 
-  // Fetch available tables when date and time are selected
+  // เรียกโต๊ะตัวที่มีอยู่
   useEffect(() => {
-    const fetchAvailableTables = async () => {
+    const fetchTables = async () => {
       try {
-        const res = await axios.get('/api/bookings/available', {
+        const res = await axios.get('/api/bookings/available-tables', {
           params: {
-            bookingDate,
-            bookingTime: timeSlot,
+            date: bookingDate,
+            time: timeSlot,
           },
           withCredentials: true,
         });
 
-        const tableIds = res.data.availableTables.map((table: any) => table.table_id);
-        setAvailableTables(tableIds);
+        setTables(res.data);
       } catch (err) {
-        console.error('Error fetching available tables:', err);
-        setAvailableTables([]); // fallback to empty
+        console.error('Error fetching tables:', err);
+        setTables([]);
       }
     };
 
     if (bookingDate && timeSlot) {
-      fetchAvailableTables();
+      fetchTables();
     } else {
-      setAvailableTables([]); // reset
+      setTables([]); // Reset
     }
   }, [bookingDate, timeSlot]);
 
-  // Automatically clear selectedTable if it becomes unavailable
+  // ปิดโต๊ะที่ถูกจอง
   useEffect(() => {
-    if (selectedTable) {
-      const selectedId = parseInt(selectedTable.replace('T', ''));
-      if (!availableTables.includes(selectedId)) {
+    if (selectedTable !== null) {
+      const selected = tables.find(t => t.table_id === selectedTable);
+      if (!selected || selected.isBooked) {
         setSelectedTable(null);
       }
     }
-  }, [availableTables]);
+  }, [tables]);
 
   return (
     <div className="p-6 max-w-xl mx-auto bg-white rounded-xl shadow-lg">
@@ -296,21 +303,20 @@ const TableBooking = () => {
       <div className="mb-4">
         <label className="block font-semibold mb-1">Select Table</label>
         <div className="grid grid-cols-5 gap-4">
-          {tables.map((table, i) => {
-            const tableId = i + 1;
-            const isAvailable = availableTables.includes(tableId);
-            const isSelected = selectedTable === table;
+          {tables.map((table) => {
+            const isSelected = selectedTable === table.table_id;
+            const isBooked = table.isBooked;
 
             return (
               <div
-                key={table}
+                key={table.table_id}
                 className={`cursor-pointer rounded-xl border p-4 text-center font-semibold shadow-sm transition
                   ${isSelected ? 'bg-green-300 border-green-600' : ''}
-                  ${!isAvailable ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-300' : 'bg-white border-gray-300 hover:bg-green-100'}`}
-                onClick={() => isAvailable && handleTableClick(table)}
+                  ${isBooked ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-300' : 'bg-white border-gray-300 hover:bg-green-100'}`}
+                onClick={() => handleTableClick(table.table_id, isBooked)}
               >
-                {table}
-                {!isAvailable && <div className="text-xs text-red-500 mt-1">Booked</div>}
+                {table.table_number}
+                {isBooked && <div className="text-xs text-red-500 mt-1">Booked</div>}
               </div>
             );
           })}

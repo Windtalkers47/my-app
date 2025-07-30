@@ -6,7 +6,8 @@ import {
   handleUpdateBooking,
   handleCancelBooking,
   handleGetAllBookings,
-  handleListAvailableTables
+  handleListAvailableTables,
+  getAvailableTables
 } from '../controllers/bookingController';
 
 const router = express.Router();
@@ -16,7 +17,8 @@ router.get('/my', authenticateToken, handleGetMyBookings);
 router.put('/:id', authenticateToken, handleUpdateBooking);
 router.patch('/:id/cancel', authenticateToken, handleCancelBooking);
 
-router.get('/all', authenticateToken, handleGetAllBookings);
+router.get('/all', authenticateToken, handleGetAllBookings); // สำหรับ Admin
 router.get('/available', authenticateToken, handleListAvailableTables);
+router.get("/available-tables", getAvailableTables);
 
 export default router;
