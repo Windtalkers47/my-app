@@ -1,8 +1,8 @@
 import { Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import About from './pages/About';
 import Contact from './pages/Contact';
-import Navbar from './components/Navbar';
 import ResetPassword from './pages/ResetPassword';
 import AdminDashboard from './pages/AdminDashboard';
 import Cart from './pages/Cart';
@@ -12,6 +12,8 @@ import ManageProducts from './pages/ManageProducts';
 import ProtectedRoute from './components/ProtectedRoute';
 import ProductList from './pages/ProductList';
 import Checkout from './pages/Checkout';
+import { Toaster } from 'react-hot-toast';
+import MyBooking from './components/MyBookings';
 
 function App() {
   return (
@@ -60,6 +62,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/my-booking"
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'customer']}>
+              <MyBooking />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/checkout/:cartId"
           element={
             <ProtectedRoute allowedRoles={['admin', 'customer']}>
@@ -68,6 +78,7 @@ function App() {
         }
         />
       </Routes>
+      <Toaster />
     </>
   );
 }

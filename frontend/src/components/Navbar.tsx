@@ -72,6 +72,7 @@ const renderLinks = () => {
       { to: '/products', label: 'Products' },
       { to: '/cart', label: 'Cart' },
       { to: '/table-booking', label: 'Table Booking' },
+      { to: '/my-booking', label: 'My Booking' },
       ...secondaryLinks
     ];
   }
@@ -82,6 +83,7 @@ const renderLinks = () => {
       { to: '/products', label: 'Products' },
       { to: '/cart', label: 'Cart' },
       { to: '/table-booking', label: 'Table Booking' },
+      { to: '/my-booking', label: 'My Booking' },
       ...secondaryLinks
     ];
   }
