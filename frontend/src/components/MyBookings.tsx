@@ -54,12 +54,13 @@ const MyBookings = () => {
         <div className="space-y-4">
           {bookings.map((b) => (
             <div key={b.table_booking_id} className="p-4 border rounded-md shadow-sm">
-              <div><strong>Date:</strong> {b.booking_date}</div>
-              <div><strong>Time:</strong> {b.booking_time}</div>
-              <div><strong>People:</strong> {b.number_of_people}</div>
+              {/* <div><strong>📅 วันที่:</strong> {b.booking_date}</div> */}
+              <div><strong>📅 วันที่:</strong> {new Date(b.booking_date).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+              <div><strong>⏰ เวลา:</strong> {b.booking_time}</div>
+              <div><strong>👥 จำนวนคน:</strong> {b.number_of_people}</div>
               <div><strong>Table ID:</strong> {b.table_id}</div>
               <div><strong>Status:</strong> <span className="capitalize">{b.status}</span></div>
-              {b.special_request && <div><strong>Note:</strong> {b.special_request}</div>}
+              {b.special_request && <div><strong>📝 คำขอพิเศษ:</strong> {b.special_request}</div>}
 
               <div className="mt-2 space-x-2">
                 <button

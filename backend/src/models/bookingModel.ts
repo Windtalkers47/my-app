@@ -48,7 +48,11 @@ export const createBooking = async (
 
 export const getUserBookings = async (userId: number) => {
   const [rows] = await db.execute(
-    `SELECT * FROM table_bookings WHERE user_id = ? ORDER BY booking_date DESC, created_at DESC, updated_at DESC`,
+    `SELECT * FROM table_bookings
+     WHERE user_id = ?
+     AND booking_date >= CURDATE()
+     AND status != 'cancelled'
+     ORDER BY booking_date ASC, booking_time ASC`,
     [userId]
   );
   return rows;
