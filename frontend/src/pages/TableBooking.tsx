@@ -327,7 +327,7 @@ const TableBooking = () => {
           <option value="">-- เลือกเวลา --</option>
           <option value="18:00-20:00">18:00 - 20:00</option>
           <option value="20:00-22:00">20:00 - 22:00</option>
-          <option value="20:00-22:00">22:00 - 00:00</option>
+          <option value="22:00-00:00">22:00 - 00:00</option>
         </select>
       </div>
 

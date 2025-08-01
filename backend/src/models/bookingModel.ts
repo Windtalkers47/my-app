@@ -80,8 +80,8 @@ export const updateBooking = async (
 
   const [result] = await db.execute(
     `UPDATE table_bookings
-     SET table_id = ?, booking_date = ?, booking_time = ?, number_of_people = ?, special_request = ?
-     WHERE table_booking_id = ? AND user_id = ?`,
+    SET table_id = ?, booking_date = ?, booking_time = ?, number_of_people = ?, special_request = ?
+    WHERE table_booking_id = ? AND user_id = ?`,
     [tableId, bookingDate, bookingTime, numberOfPeople, specialRequest || null, bookingId, userId]
   );
   return result;
