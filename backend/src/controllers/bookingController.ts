@@ -25,8 +25,8 @@ export const handleGetAllBookings = async (_req: Request, res: Response) => {
   try {
     const bookings = await getAllBookings();
     res.status(200).json(bookings);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch all bookings' });
+  } catch (err : any) {
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -40,8 +40,8 @@ export const handleListAvailableTables = async (req: Request, res: Response) => 
   try {
     const tables = await listAvailableTables(bookingDate as string, bookingTime as string);
     res.status(200).json(tables);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch available tables' });
+  } catch (err : any) {
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -51,8 +51,8 @@ export const handleGetMyBookings = async (req: Request, res: Response) => {
   try {
     const bookings = await getUserBookings(userId);
     res.status(200).json(bookings);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch bookings' });
+  } catch (err : any) {
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -67,8 +67,8 @@ export const handleUpdateBooking = async (req: Request, res: Response) => {
   try {
     const result = await updateBooking(bookingId, userId, tableId, bookingDate, bookingTime, numberOfPeople, specialRequest);
     res.status(200).json({ message: 'Booking updated successfully', result });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to update booking' });
+  } catch (err : any) {
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -82,8 +82,8 @@ export const handleCancelBooking = async (req: Request, res: Response) => {
   try {
     const result = await cancelBooking(bookingId, userId);
     res.status(200).json({ message: 'Booking cancelled successfully', result });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to cancel booking' });
+  } catch (err : any) {
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -98,8 +98,7 @@ export const getAvailableTables = async (req: Request, res: Response) => {
 
     const tables = await getTablesWithAvailability(date as string, time as string);
     res.json(tables);
-  } catch (err) {
-    console.error("Error getting available tables:", err);
-    res.status(500).json({ error: "Internal server error" });
+  } catch (err : any) {
+    res.status(500).json({ error: err.message });
   }
 };

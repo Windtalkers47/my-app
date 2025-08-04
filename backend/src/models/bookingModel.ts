@@ -67,6 +67,26 @@ export const updateBooking = async (
   numberOfPeople: number,
   specialRequest?: string
 ) => {
+
+  const SPARE_CHAIRS = 6; // เก้าอี้สำรอง มี 6 ตัว
+
+  const [tableResult] = await db.query(
+    `SELECT * FROM tables WHERE table_id = ?`,
+    [tableId]
+  );
+
+  const table = (tableResult as any[])[0];
+  if (!table) {
+    throw new Error(`Table with ID ${tableId} not found.`);
+  }
+
+  const maxAvailableSeats = table.seats + SPARE_CHAIRS;
+
+    // Check จำนวนที่นั่ง มากกว่าที่มีในโต๊ะหรือป่าว
+  if (numberOfPeople > maxAvailableSeats) {
+    throw new Error(`Table ${tableId} cannot accommodate ${numberOfPeople} people. Maximum with spare chairs is ${maxAvailableSeats}.`);
+  }
+
   const [existingBooking] = await db.query(
     `SELECT * FROM table_bookings 
      WHERE table_id = ? AND booking_date = ? AND booking_time = ? AND table_booking_id != ? AND status IN ('pending', 'confirmed')`,
@@ -80,10 +100,19 @@ export const updateBooking = async (
 
   const [result] = await db.execute(
     `UPDATE table_bookings
-    SET table_id = ?, booking_date = ?, booking_time = ?, number_of_people = ?, special_request = ?
-    WHERE table_booking_id = ? AND user_id = ?`,
-    [tableId, bookingDate, bookingTime, numberOfPeople, specialRequest || null, bookingId, userId]
+     SET table_id = ?, booking_date = ?, booking_time = ?, number_of_people = ?, special_request = ?
+     WHERE table_booking_id = ? AND user_id = ?`,
+    [
+      tableId,
+      bookingDate,
+      bookingTime,
+      numberOfPeople,
+      specialRequest || null,
+      bookingId,
+      userId
+    ]
   );
+
   return result;
 };
 
