@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
+import apiClient from '../utils/axiosConfig';
 
 type User = {
   user_id: number;
@@ -16,36 +16,29 @@ const UserPermissionManager = () => {
 
   const fetchUsers = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.get('/api/admin/users', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await apiClient.get('/api/admin/users');
       setUsers(res.data);
       setLoading(false);
-    } catch (err) {
-      console.error('Failed to fetch users', err);
+    } catch (err: any) {
+      console.error(err);
+      const errorMessage = err.response?.data?.message || 'ไม่สามารถดึงข้อมูลผู้ใช้ได้';
+      alert(errorMessage);
     }
   };
 
   const updateRole = async (userId: number, newRole: string) => {
     try {
-      const token = localStorage.getItem('token');
-
       // Role
       // admin = role_id 1
       // customer = role_id 2
       const roleId = newRole === 'admin' ? 1 : 2;
 
-      await axios.put(`/api/user/${userId}/role`, { roleId }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await apiClient.put(`/api/user/${userId}/role`, { roleId });
       fetchUsers(); // รีเอาข้อมูลใหม่หลัง Update เสร็จ
-    } catch (err) {
-      console.error('Failed to update role', err);
+    } catch (err: any) {
+      console.error(err);
+      const errorMessage = err.response?.data?.message || 'ไม่สามารถอัปเดตสิทธิ์ผู้ใช้ได้';
+      alert(errorMessage);
     }
   };
 

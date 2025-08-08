@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import apiClient from '../../utils/axiosConfig';
 
 import { encryptPassword } from '../../utils/encrypt';
 
@@ -18,29 +18,25 @@ export default function LoginModal({ onClose, onLoginSuccess }: Props) {
 
   const handleLogin = async () => {
     try {
-  const encryptedPassword = encryptPassword(password);
+      const encryptedPassword = encryptPassword(password);
 
-    const res = await axios.post('/api/login', {
-      email: email,
-      password: encryptedPassword
-      
-    });
+      const res = await apiClient.post('/api/login', {
+        email: email,
+        password: encryptedPassword
+      });
 
-    localStorage.setItem('token', res.data.token); // ✅ save token
-    localStorage.setItem('role', res.data.user.role); // ✅ save role
-    localStorage.setItem('user_id', res.data.user.id); // เอาไว้ใช้ตอนเลือกสินค้า
+      onLoginSuccess(res.data.user.role); // ส่ง Role กลับ
 
-    onLoginSuccess(res.data.user.role); // ส่ง Role กลับ
-
-    alert('Login successful');
-    setStep('login');
-    setEmail('');
-    setPassword('');
-  } catch (error) {
-    alert('Login failed');
-    console.error(error);
-  }
-};
+      alert('Login successful');
+      setStep('login');
+      setEmail('');
+      setPassword('');
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Login failed';
+      alert(errorMessage);
+      console.error('Login error:', error);
+    }
+  };
 
   //#endregion
 
@@ -50,31 +46,24 @@ export default function LoginModal({ onClose, onLoginSuccess }: Props) {
 
   const handleRegister = async () => {
     try {
-
       const encrypted = encryptPassword(regPassword);
 
-    const res = await axios.post('/api/register', {
-      email: regEmail,
-      password: encrypted
-    });
+      const res = await apiClient.post('/api/register', {
+        email: regEmail,
+        password: encrypted
+      });
 
-    localStorage.setItem('token', res.data.token); // ✅ save token
-    localStorage.setItem('role', res.data.role);   // ✅ save role
-    localStorage.setItem('user_id', res.data.user.id);
-
-    alert('Registered successfully');
-    onLoginSuccess(res.data.role); // ✅ close modal
-    setStep('login');
-    setEmail('');
-    setPassword('');
-    window.location.reload(); // ✅ or update global auth state instead
-  } catch (error) {
-    alert('Registration failed');
-    console.error(error);
-  }
-
-
-
+      alert('Registered successfully');
+      onLoginSuccess(res.data.role); // ✅ close modal
+      setStep('login');
+      setEmail('');
+      setPassword('');
+      window.location.reload(); // ✅ or update global auth state instead
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Registration failed';
+      alert(errorMessage);
+      console.error('Registration error:', error);
+    }
   };
   //#endregion
 
@@ -82,31 +71,29 @@ export default function LoginModal({ onClose, onLoginSuccess }: Props) {
 
   const [forgotEmail, setForgotEmail] = useState('');
 
-const handleForgotPassword = async () => {
-
+  const handleForgotPassword = async () => {
     if (!forgotEmail) {
-    alert('Please enter your email');
-    return;
-  }
+      alert('Please enter your email');
+      return;
+    }
 
+    try {
+      const res = await apiClient.post('/api/forgot-password', {
+        email: forgotEmail,
+      });
 
-  try {
-    const res = await axios.post('/api/forgot-password', {
-      email: forgotEmail,
-    });
+      const data = res.data;
 
-    const data = res.data;
+      alert(`Reset link sent. Token: ${data.token}`);
+      setStep('login');
+    } catch (err: any) {
+      console.error(err);
+      const message = err.response?.data?.message || 'Request failed';
+      alert(message);
+    }
+  };
 
-    alert(`Reset link sent. Token: ${data.token}`);
-    setStep('login');
-  } catch (err: any) {
-    console.error(err);
-    const message = err.response?.data?.message || 'Request failed';
-    alert(message);
-  }
-};
-
-//#endregion
+  //#endregion
 
 
   return (

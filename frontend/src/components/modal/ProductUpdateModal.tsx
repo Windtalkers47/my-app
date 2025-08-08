@@ -1,14 +1,7 @@
-import { useState } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
+import apiClient from '../../utils/axiosConfig';
 
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  image: string | null;
-  stock: number;
-}
+import { Product } from '../../types/Product';
 
 interface Props {
   product: Product;
@@ -17,14 +10,14 @@ interface Props {
 }
 
 export default function ProductUpdateModal({ product, onClose, onUpdated }: Props) {
-const [formData, setFormData] = useState<Product>({
-  id: product.id ?? (product as any).product_id,
-  name: product.name,
-  description: product.description,
-  price: Number(product.price),
-  image: product.image,
-  stock: product.stock,
-});
+  const [formData, setFormData] = useState<Product>({
+    id: product.id ?? (product as any).product_id,
+    name: product.name,
+    description: product.description,
+    price: Number(product.price),
+    image: product.image,
+    stock: product.stock,
+  });
 
   const [loading, setLoading] = useState(false);
 
@@ -42,17 +35,11 @@ const [formData, setFormData] = useState<Product>({
     setLoading(true);
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('User not authenticated');
-      }
-
-      await axios.put(
+      await apiClient.put(
         `/api/products/${formData.id}`,
         formData,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         }

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
+import apiClient from '../utils/axiosConfig';
 import toast from 'react-hot-toast';
 import Navbar from '../components/Navbar';
 
@@ -15,8 +15,6 @@ type MyBooking = {
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState<MyBooking[]>([]);
-  const token = localStorage.getItem('token');
-
   const [editingBooking, setEditingBooking] = useState<MyBooking | null>(null);
   const [formData, setFormData] = useState({
     table_id: 1,
@@ -26,24 +24,27 @@ const MyBookings = () => {
     special_request: '',
   });
 
-  const fetchMyBookings = async () => {
-    try {
-      const res = await axios.get('/api/bookings/my', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setBookings(res.data);
-    } catch (err) {
-      toast.error('Failed to fetch bookings');
-    }
-  };
-
   useEffect(() => {
-    fetchMyBookings();
+    const fetchBookings = async () => {
+      try {
+        const res = await apiClient.get('/api/bookings/my');
+        setBookings(res.data);
+      } catch (err: any) {
+        if (err.response?.status === 401) {
+          alert('กรุณาเข้าสู่ระบบ');
+          window.location.href = '/';
+        } else {
+          console.error(err);
+          const errorMessage = err.response?.data?.message || 'ไม่สามารถดึงข้อมูลการจองได้';
+          alert(errorMessage);
+        }
+      }
+    };
+
+    fetchBookings();
   }, []);
 
-    const handleEdit = (booking: MyBooking) => {
+  const handleEdit = (booking: MyBooking) => {
     setEditingBooking(booking);
     setFormData({
       table_id: booking.table_id,
@@ -54,41 +55,35 @@ const MyBookings = () => {
     });
   };
 
-const handleUpdate = async () => {
-  if (!editingBooking) return;
+  const handleUpdate = async () => {
+    if (!editingBooking) return;
 
-  try {
-    await axios.put(
-      `/api/bookings/${editingBooking.table_booking_id}`,
-      {
-        tableId: formData.table_id,
-        bookingDate: formData.booking_date,
-        bookingTime: formData.booking_time,
-        numberOfPeople: formData.number_of_people,
-        specialRequest: formData.special_request || null,
-      },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+    try {
+      await apiClient.put(
+        `/api/bookings/${editingBooking.table_booking_id}`,
+        {
+          tableId: formData.table_id,
+          bookingDate: formData.booking_date,
+          bookingTime: formData.booking_time,
+          numberOfPeople: formData.number_of_people,
+          specialRequest: formData.special_request || null,
+        }
+      );
 
-    toast.success('Booking updated');
-    setEditingBooking(null);
-    fetchMyBookings();
-  } catch (err: any) {
-    const msg = err?.response?.data?.error || 'Update failed';
-    toast.error(msg);
-  }
-};
-
+      toast.success('Booking updated');
+      setEditingBooking(null);
+      setBookings(bookings.map((booking) => (booking.table_booking_id === editingBooking.table_booking_id ? { ...booking, ...formData } : booking)));
+    } catch (err: any) {
+      const msg = err?.response?.data?.error || 'Update failed';
+      toast.error(msg);
+    }
+  };
 
   const handleCancel = async (bookingId: number) => {
     try {
-      await axios.patch(`/api/bookings/${bookingId}/cancel`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await apiClient.patch(`/api/bookings/${bookingId}/cancel`, {});
       toast.success('Booking cancelled');
-      fetchMyBookings(); // Refresh
+      setBookings(bookings.filter((booking) => booking.table_booking_id !== bookingId));
     } catch {
       toast.error('Cancel failed');
     }

@@ -2,9 +2,9 @@ import CryptoJS from 'crypto-js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { Request, Response } from 'express';
-import { createUser, findUserByEmail } from '../models/userModel';
 import { validationResult } from 'express-validator';
 
+import { createUser, findUserByEmail } from '../models/userModel';
 
 import crypto from 'crypto'; // token generate สำหรับ forgot password
 import db from '../utils/db';
@@ -72,21 +72,44 @@ if (!user) return res.status(401).json({ message: 'Invalid credentials' });
 const valid = await bcrypt.compare(decryptedPassword, user.user_password);
 if (!valid) return res.status(401).json({ message: 'Invalid credentials' });
 
-const token = jwt.sign(
-  {
-    id: user.user_id,
-    email: user.user_email,
-    role: user.role_name
-  },
-  process.env.JWT_SECRET!,
-  { expiresIn: '24h' }
-);
+// Generate access token (short-lived)
+  const accessToken = jwt.sign(
+    {
+      id: user.user_id,
+      email: user.user_email,
+      role: user.role_name
+    },
+    process.env.JWT_SECRET!,
+    { expiresIn: '15m' } // Short expiry for access token
+  );
 
+  // Generate refresh token (long-lived)
+  const refreshToken = jwt.sign(
+    {
+      id: user.user_id,
+      email: user.user_email
+    },
+    process.env.JWT_REFRESH_SECRET!,
+    { expiresIn: '7d' } // Longer expiry for refresh token
+  );
 
+  // Set cookies
+  res.cookie('token', accessToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'strict',
+    maxAge: 15 * 60 * 1000 // 15 minutes
+  });
+
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'strict',
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+  });
 
   res.json({
     message: 'Login successful',
-    token,
     user: {
       id: user.user_id,
       email: user.user_email,
@@ -95,6 +118,8 @@ const token = jwt.sign(
       role: user.role_name
     },
   });
+
+
 };
 
 //#endregion

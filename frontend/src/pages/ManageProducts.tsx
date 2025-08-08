@@ -1,86 +1,70 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import apiClient from '../utils/axiosConfig';
 import ProductCard from '../components/ProductCard';
 import ProductCreateModal from '../components/modal/ProductCreateModal';
 import ProductUpdateModal from '../components/modal/ProductUpdateModal';
 
 import Navbar from '../components/Navbar';
 
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  image: string | null;
-  stock: number;
-}
+import { Product } from '../types/Product';
 
 export default function ManageProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
-  const role = localStorage.getItem('role');
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const token = localStorage.getItem('token');
+  const fetchProducts = async () => {
+    try {
+      const res = await apiClient.get('/api/products');
+      setProducts(res.data);
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        alert('กรุณาเข้าสู่ระบบ');
+        window.location.href = '/';
+      } else if (err.response?.status === 403) {
+        alert('คุณไม่มีสิทธิ์เข้าถึงหน้านี้');
+        window.location.href = '/';
+      } else {
+        console.error(err);
+        const errorMessage = err.response?.data?.message || 'ไม่สามารถดึงข้อมูลสินค้าได้';
+        alert(errorMessage);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
-const fetchProducts = async () => {
-  try {
-    const res = await axios.get('/api/products');
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
-    // Normalize product_id → id
-    const normalized = res.data.map((p: any) => ({
-      ...p,
-      id: p.product_id ?? p.id, // fallback
-    }));
+  const handleDelete = async (id: number) => {
+    if (!window.confirm('คุณแน่ใจหรือไม่ที่จะลบสินค้านี้?')) return;
 
-    setProducts(normalized);
-  } catch (err) {
-    console.error('Error fetching products', err);
-  } finally {
-    setLoading(false);
-  }
-};
+    try {
+      await apiClient.delete(`/api/products/${id}`);
+      setProducts(products.filter(p => p.id !== id));
+      alert('ลบสินค้าสำเร็จ');
+    } catch (err: any) {
+      console.error(err);
+      const errorMessage = err.response?.data?.message || 'ไม่สามารถลบสินค้าได้';
+      alert(errorMessage);
+    }
+  };
 
-
-const deleteProduct = async (id: number) => {
-  if (!window.confirm('Are you sure you want to delete this product?')) return;
-
-   // or however you store it
-
-  try {
-    await axios.delete(`/api/products/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    setProducts(products.filter(p => p.id !== id));
-  } catch (err) {
-    console.error('Error deleting product', err);
-    alert('Failed to delete product');
-  }
-};
-
-
-  const editProduct = (product: Product) => {
+  const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
     setIsEditModalOpen(true);
   };
 
-  useEffect(() => {
-    if (role !== 'admin') {
-      navigate('/');
-    } else {
-      fetchProducts();
-    }
-  }, [role, navigate]);
+  // Role checking is handled by ProtectedRoute component, so we don't need to check it here
 
   return (
     <div className="pt-20 px-6">
@@ -106,8 +90,8 @@ const deleteProduct = async (id: number) => {
             <ProductCard
               key={product.id}
               product={product}
-              onEdit={editProduct}
-              onDelete={deleteProduct}
+              onEdit={handleEditProduct}
+              onDelete={handleDelete}
             />
           ))}
         </div>

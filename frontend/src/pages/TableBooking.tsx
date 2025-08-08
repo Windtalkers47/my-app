@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
+import apiClient from '../utils/axiosConfig';
 import toast from 'react-hot-toast';
 import Navbar from '../components/Navbar';
 
@@ -11,8 +11,6 @@ type Table = {
 };
 
 const TableBooking = () => {
-
-  const token = localStorage.getItem('token');
 
   const [bookingDate, setBookingDate] = useState('');
   const [timeSlot, setTimeSlot] = useState('');
@@ -26,7 +24,7 @@ const TableBooking = () => {
   const fetchAvailableTables = async () => {
     if (!bookingDate || !timeSlot) return;
     try {
-      const res = await axios.get('/api/bookings/available-tables', {
+      const res = await apiClient.get('/api/bookings/available-tables', {
         params: { date: bookingDate, time: timeSlot.split('-')[0] },
       });
       setAvailableTables(res.data);
@@ -59,7 +57,7 @@ const TableBooking = () => {
     setLoading(true);
 
       try {
-      await axios.post(
+      await apiClient.post(
         '/api/bookings',
         {
           bookingDate,
@@ -67,11 +65,6 @@ const TableBooking = () => {
           tableId: selectedTableId,
           numberOfPeople: numberOfPeople,
           specialRequest: specialRequest || null,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         }
       );
 

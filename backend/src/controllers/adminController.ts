@@ -35,14 +35,20 @@ export const getSummaryStats = async (req: Request, res: Response) => {
 export const getBookingReport = async (req: Request, res: Response) => {
   const { from, to } = req.query;
   try {
-    const [rows] = await db.query(
-      `SELECT b.table_booking_id, u.username, b.table_id, b.booking_date, b.booking_time, b.number_of_people, b.status
-       FROM table_bookings b
-       JOIN users u ON b.user_id = u.id
-       WHERE b.booking_date BETWEEN ? AND ?
-       ORDER BY b.booking_date DESC`,
-      [from, to]
-    );
+    let query = `SELECT b.table_booking_id, u.user_name, b.table_id, b.booking_date, b.booking_time, b.number_of_people, b.status
+                 FROM table_bookings b
+                 JOIN users u ON b.user_id = u.user_id`;
+    const params: any[] = [];
+    
+    // filter วันที่
+    if (from && to) {
+      query += ' WHERE b.booking_date BETWEEN ? AND ?';
+      params.push(from, to);
+    }
+    
+    query += ' ORDER BY b.booking_date DESC';
+    
+    const [rows] = await db.query(query, params);
     res.json(rows);
   } catch (err) {
     console.error(err);

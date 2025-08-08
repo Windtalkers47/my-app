@@ -3,34 +3,45 @@ import { Menu, X } from 'lucide-react';
 import LoginModal from './modal/LoginModal'
 import { Link, useNavigate } from 'react-router-dom';
 import { isLoggedIn, getUserRole } from '../utils/auth';
+import apiClient from '../utils/axiosConfig';
 
 export default function Navbar() {
   const [navOpen, setNavOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [role, setRole] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
 useEffect(() => {
-  const checkAuth = () => {
-    const isLogged = isLoggedIn();
-    const userRole = getUserRole();
-    setLoggedIn(isLogged);
-    setRole(userRole);
+  const checkAuth = async () => {
+    try {
+      setLoading(true);
+      const isLogged = await isLoggedIn();
+      const userRole = await getUserRole();
+      setLoggedIn(isLogged);
+      setRole(userRole);
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      setLoggedIn(false);
+      setRole(null);
+    } finally {
+      setLoading(false);
+    }
   };
 
   checkAuth(); // เช็คครั้งแรกตอน mount
 
-  // ฟัง event การเปลี่ยน localStorage (เช่น role/token เปลี่ยน)
-  const handleStorageChange = () => {
+  // ฟัง event การเปลี่ยน auth state
+  const handleAuthChange = () => {
     checkAuth();
   };
 
-    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('authChange', handleAuthChange);
 
   return () => {
-    window.removeEventListener('storage', handleStorageChange);
+    window.removeEventListener('authChange', handleAuthChange);
   };
 }, []);
 
@@ -40,18 +51,26 @@ useEffect(() => {
 
 const handleLoginSuccess = (role: string) => {
   setLoggedIn(true);
-  setRole(role);       // 👈 เก็บ role จาก LoginModal โดยตรง
-  setShowLogin(false); // 👈 ปิด modal
+  setRole(role);       // เก็บ role จาก LoginModal โดยตรง
+  setShowLogin(false); // ปิด modal
 };
 
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    localStorage.removeItem('user_id');
+  const handleLogout = async () => {
+    // Clear auth state immediately to prevent race conditions
     setLoggedIn(false);
     setRole(null);
-    navigate('/');
+    
+    try {
+      const response = await apiClient.post('/api/logout');
+      if (response.status === 200) {
+        // Already cleared state above
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Already cleared state above
+      navigate('/');
+    }
   };
 
 const renderLinks = () => {
@@ -116,7 +135,11 @@ const renderLinks = () => {
             </Link>
           ))}
 
-          {!loggedIn ? (
+          {loading ? (
+            <div className="w-24 h-8 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+            </div>
+          ) : !loggedIn ? (
             <button
               onClick={openLoginModal}
               className="text-sm text-blue-600 border border-blue-600 px-3 py-1 rounded hover:bg-blue-100"
@@ -155,7 +178,11 @@ const renderLinks = () => {
             </Link>
           ))}
 
-          {!loggedIn ? (
+          {loading ? (
+            <div className="w-24 h-8 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+            </div>
+          ) : !loggedIn ? (
             <button
               onClick={() => {
                 toggleNav();

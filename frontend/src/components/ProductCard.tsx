@@ -1,13 +1,5 @@
 import React from 'react';
-
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  image: string | null;
-  stock: number;
-}
+import { Product } from '../types/Product';
 
 interface Props {
   product: Product;

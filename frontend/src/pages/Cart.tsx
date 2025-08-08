@@ -1,55 +1,75 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
+import apiClient from '../utils/axiosConfig';
 import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 
-
 const Cart = () => {
   const [items, setItems] = useState<any[]>([]);
+  const [cart, setCart] = useState<any>({});
   const [cartId, setCartId] = useState<number | null>(null);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const user_id = localStorage.getItem('user_id');
-    if (!user_id) return;
-
-    axios.get(`/api/cart/${user_id}`)
+    apiClient.get('/api/cart')
       .then((res) => {
+        setCart(res.data);
         setItems(res.data.items);
-        setCartId(res.data.cart.cart_id);
+        setCartId(res.data.cart_id);
       })
-      .catch((err) => console.error('Error loading cart:', err));
+      .catch((err) => {
+        if (err.response?.status === 401) {
+          alert('กรุณาเข้าสู่ระบบ');
+          window.location.href = '/';
+        } else {
+          console.error(err);
+          const errorMessage = err.response?.data?.message || 'ไม่สามารถดึงข้อมูลตะกร้าได้';
+          alert(errorMessage);
+        }
+      });
   }, []);
 
-  const updateQuantity = (itemId: number, quantity: number) => {
-    if (!cartId) return;
-    axios.put(`/api/cart/${cartId}/items/${itemId}`, { quantity })
+  const handleUpdateQuantity = (itemId: number, quantity: number) => {
+    apiClient.put(`/api/cart/${cart.cart_id}/items/${itemId}`, { quantity })
       .then(() => {
         setItems((prev) =>
           prev.map((item) =>
             item.cart_item_id === itemId ? { ...item, quantity } : item
           )
         );
+      })
+      .catch((err) => {
+        console.error(err);
+        const errorMessage = err.response?.data?.message || 'ไม่สามารถอัปเดตจำนวนสินค้าได้';
+        alert(errorMessage);
       });
   };
 
   const removeItem = (itemId: number) => {
-    if (!cartId) return;
-    axios.delete(`/api/cart/${cartId}/items/${itemId}`).then(() => {
-      setItems((prev) => prev.filter((item) => item.cart_item_id !== itemId));
-    });
+    apiClient.delete(`/api/cart/${cart.cart_id}/items/${itemId}`)
+      .then(() => {
+        setItems((prev) => prev.filter((item) => item.cart_item_id !== itemId));
+      })
+      .catch((err) => {
+        console.error(err);
+        const errorMessage = err.response?.data?.message || 'ไม่สามารถลบสินค้าออกจากตะกร้าได้';
+        alert(errorMessage);
+      });
   };
 
-const handleCheckout = () => {
-  if (!cartId) return;
-  axios.post(`/api/cart/${cartId}/checkout`)
-    .then(() => {
-      alert('✅ Checkout complete! Generating QR...');
-      navigate(`/checkout/${cartId}`); // Navigate to QR page
-    })
-    .catch((err) => console.error('Checkout failed:', err));
-};
+  const handleCheckout = () => {
+    apiClient.post(`/api/cart/${cart.cart_id}/checkout`)
+      .then(() => {
+        alert('✅ Checkout complete! Generating QR...');
+        navigate(`/checkout/${cart.cart_id}`); // Navigate to QR page
+      })
+      .catch((err) => {
+        console.error(err);
+        const errorMessage = err.response?.data?.message || 'ไม่สามารถชำระเงินได้';
+        alert(errorMessage);
+      });
+  };
+
 
 
   return (
@@ -68,13 +88,13 @@ const handleCheckout = () => {
 
               <div className="flex gap-2 items-center mt-2">
                 <button
-                  onClick={() => updateQuantity(item.cart_item_id, item.quantity - 1)}
+                  onClick={() => handleUpdateQuantity(item.cart_item_id, item.quantity - 1)}
                   className="px-2 bg-gray-200 rounded"
                   disabled={item.quantity <= 1}
                 >−</button>
                 <span>{item.quantity}</span>
                 <button
-                  onClick={() => updateQuantity(item.cart_item_id, item.quantity + 1)}
+                  onClick={() => handleUpdateQuantity(item.cart_item_id, item.quantity + 1)}
                   className="px-2 bg-gray-200 rounded"
                 >＋</button>
                 <button

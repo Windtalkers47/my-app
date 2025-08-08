@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import apiClient from '../../utils/axiosConfig';
 
 interface Props {
   onClose: () => void;
@@ -30,18 +30,11 @@ export default function ProductCreateModal({ onClose, onCreated }: Props) {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error('Not authenticated');
-
-      await axios.post('/api/products', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      await apiClient.post('/api/products', formData);
 
       onCreated();
       onClose();
+      alert('เพิ่มสินค้าสำเร็จ');
     } catch (err) {
       console.error('Create product error:', err);
       alert('Failed to create product');

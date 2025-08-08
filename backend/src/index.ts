@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoutes';
 import productRoutes from './routes/productRoutes';
 
@@ -17,6 +18,10 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(cookieParser());
+
+// Cookie-based auth endpoints are now part of authRoutes
+// No need for separate route declarations here
 
 app.use('/api', authRoutes);
 app.use('/api/products', productRoutes);
