@@ -13,7 +13,7 @@ const menuItems = [
 export default function About() {
 
   return (
-    <div className="pt-20 bg-cafe-background min-h-screen">
+    <div className="pt-16 bg-cafe-background min-h-screen">
       <Navbar />
 
       <section className="h-screen bg-[url('https://everydaydocuments.com/article/images/2023-how-to-find-windows-spotlight-wallpapers/2023-how-to-find-windows-spotlight-wallpapers.jpg')] bg-cover bg-center flex items-center justify-center">

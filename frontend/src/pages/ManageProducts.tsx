@@ -67,7 +67,7 @@ export default function ManageProducts() {
   // Role checking is handled by ProtectedRoute component, so we don't need to check it here
 
   return (
-    <div className="pt-20 bg-cafe-background min-h-screen">
+    <div className="pt-16 bg-cafe-background min-h-screen">
       <Navbar />
 
       <section className="cafe-section">

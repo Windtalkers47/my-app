@@ -28,7 +28,7 @@ export default function AdminDashboard() {
   }, []);
 
   return (
-    <div className="pt-20 bg-cafe-background min-h-screen">
+    <div className="pt-16 bg-cafe-background min-h-screen">
       <Navbar />
       <section className="cafe-section">
         <div className="cafe-container max-w-6xl">
@@ -38,10 +38,10 @@ export default function AdminDashboard() {
               <h2 className="cafe-subheading mb-6">สถิติโดยรวม</h2>
               <StatsOverview stats={stats} />
             </div>
-            <div className="cafe-card p-6 fade-in">
-              <h2 className="cafe-subheading mb-6">จัดการสิทธิ์ผู้ใช้</h2>
+            {/* <div className="cafe-card p-6 fade-in"> */}
+              {/* <h2 className="cafe-subheading mb-6">จัดการสิทธิ์ผู้ใช้</h2> */}
               <UserPermissionManager />
-            </div>
+            {/* </div> */}
             <div className="cafe-card p-6 fade-in lg:col-span-2">
               <h2 className="cafe-subheading mb-6">รายงานการจอง</h2>
               <BookingReportTable />

@@ -13,7 +13,7 @@ const menuItems = [
 export default function Home() {
 
   return (
-    <div className="pt-20 bg-cafe-background">
+    <div className="pt-16 bg-cafe-background">
       <Navbar />
 
       {/* Hero Section */}

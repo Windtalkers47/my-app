@@ -22,7 +22,7 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="pt-20 bg-cafe-background min-h-screen flex items-center justify-center p-4">
+    <div className="pt-16 bg-cafe-background min-h-screen flex items-center justify-center p-4">
       <div className="cafe-card p-8 max-w-md w-full fade-in">
         <h2 className="cafe-heading mb-6 text-center">รีเซ็ตรหัสผ่าน</h2>
         

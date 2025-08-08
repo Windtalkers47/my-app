@@ -10,7 +10,7 @@ export default function Checkout() {
   const qrData = `https://yourapp.com/pay?cart=${cartId}`;
 
   return (
-    <div className="pt-20 bg-cafe-background min-h-screen">
+    <div className="pt-16 bg-cafe-background min-h-screen">
       <Navbar />
       
       <section className="cafe-section">

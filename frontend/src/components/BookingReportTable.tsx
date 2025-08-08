@@ -59,7 +59,7 @@ const BookingReportTable = () => {
 
   return (
     <div className="cafe-card p-6 fade-in">
-      <h2 className="cafe-subheading mb-6">รายงานการจอง</h2>
+      {/* <h2 className="cafe-subheading mb-6">รายงานการจอง</h2> */}
       
       {/* Date Filter Controls */}
       <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 bg-cafe-light p-6 rounded-xl">
