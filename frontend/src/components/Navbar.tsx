@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Menu, X } from 'lucide-react';
-import LoginModal from './modal/LoginModal';
-import { Link } from 'react-router-dom';
+import LoginModal from './modal/LoginModal'
+import { Link, useNavigate } from 'react-router-dom';
 import { isLoggedIn, getUserRole } from '../utils/auth';
 
 export default function Navbar() {
@@ -9,6 +9,8 @@ export default function Navbar() {
   const [showLogin, setShowLogin] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [role, setRole] = useState<string | null>(null);
+
+  const navigate = useNavigate();
 
 useEffect(() => {
   const checkAuth = () => {
@@ -49,6 +51,7 @@ const handleLoginSuccess = (role: string) => {
     localStorage.removeItem('user_id');
     setLoggedIn(false);
     setRole(null);
+    navigate('/');
   };
 
 const renderLinks = () => {

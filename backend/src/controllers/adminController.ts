@@ -71,6 +71,22 @@ export const getProductSalesReport = async (req: Request, res: Response) => {
   }
 };
 
+// GET /admin/users
+export const getAllUsers = async (req: Request, res: Response) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT u.user_id, u.user_name, u.user_email, r.role_name AS role 
+       FROM users u 
+       LEFT JOIN roles r ON u.role_id = r.role_id`
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }
+};
+
+
 // PUT /admin/user/:id/role
 export const updateUserRole = async (req: Request, res: Response) => {
   const userId = parseInt(req.params.id);

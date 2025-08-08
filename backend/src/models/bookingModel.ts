@@ -117,6 +117,8 @@ export const updateBooking = async (
 };
 
 export const cancelBooking = async (bookingId: number, userId: number) => {
+
+  // validate check Table
   const [result] = await db.execute(
     `UPDATE table_bookings SET status = 'cancelled' WHERE table_booking_id = ? AND user_id = ?`,
     [bookingId, userId]

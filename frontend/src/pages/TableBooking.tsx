@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import Navbar from '../components/Navbar';
 
 type Table = {
   table_id: number;
@@ -91,6 +92,7 @@ const TableBooking = () => {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
+      <Navbar />
       <h2 className="text-2xl font-bold mb-4">📅 จองโต๊ะร้านอาหาร</h2>
 
       <div className="mb-4">

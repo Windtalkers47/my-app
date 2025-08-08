@@ -17,6 +17,7 @@ export const createCart = async (req: Request, res: Response) => {
 };
 
 // POST /api/cart/:cartId/items เพิ่มสินค้าลงตระกร้า
+// หยิบ
 export const addItemToCart = async (req: Request, res: Response) => {
   const { cartId } = req.params;
   const { product_id, quantity, price } = req.body;

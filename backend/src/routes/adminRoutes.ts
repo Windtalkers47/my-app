@@ -4,6 +4,7 @@ import { authorizeRoles } from '../middleware/roleMiddleware';
 import {
   getSummaryStats,
   getBookingReport,
+  getAllUsers,
   updateUserRole,
   exportReport,
 } from '../controllers/adminController';
@@ -12,6 +13,7 @@ const router = express.Router();
 
 router.get('/stats', authenticateToken, getSummaryStats);
 router.get('/bookings/report', authenticateToken, getBookingReport);
+router.get('/users', authenticateToken, getAllUsers);
 router.put('/user/:id/role', authenticateToken, updateUserRole);
 router.get('/report/export', authenticateToken, exportReport);
 

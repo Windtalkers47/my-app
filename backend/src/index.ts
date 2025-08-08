@@ -6,6 +6,7 @@ import productRoutes from './routes/productRoutes';
 
 import cartRoutes from './routes/cartRoutes';
 import bookingRoutes from './routes/bookingRoutes';
+import adminRoutes from './routes/adminRoutes';
 
 dotenv.config();
 const app = express();
@@ -21,6 +22,7 @@ app.use('/api', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/admin', adminRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));

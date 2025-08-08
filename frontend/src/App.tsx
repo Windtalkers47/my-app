@@ -13,7 +13,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ProductList from './pages/ProductList';
 import Checkout from './pages/Checkout';
 import { Toaster } from 'react-hot-toast';
-import MyBooking from './components/MyBookings';
+import MyBooking from './pages/MyBookings';
 
 function App() {
   return (
