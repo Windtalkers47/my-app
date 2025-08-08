@@ -28,14 +28,27 @@ export default function AdminDashboard() {
   }, []);
 
   return (
-    <div className="pt-20">
+    <div className="pt-20 bg-cafe-background min-h-screen">
       <Navbar />
-      <div className="p-6 space-y-8">
-        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        <StatsOverview stats={stats} />
-        <UserPermissionManager />
-        <BookingReportTable />
-      </div>
+      <section className="cafe-section">
+        <div className="cafe-container max-w-6xl">
+          <h1 className="cafe-heading mb-8">แผงควบคุมผู้ดูแลระบบ</h1>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="cafe-card p-6 fade-in">
+              <h2 className="cafe-subheading mb-6">สถิติโดยรวม</h2>
+              <StatsOverview stats={stats} />
+            </div>
+            <div className="cafe-card p-6 fade-in">
+              <h2 className="cafe-subheading mb-6">จัดการสิทธิ์ผู้ใช้</h2>
+              <UserPermissionManager />
+            </div>
+            <div className="cafe-card p-6 fade-in lg:col-span-2">
+              <h2 className="cafe-subheading mb-6">รายงานการจอง</h2>
+              <BookingReportTable />
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

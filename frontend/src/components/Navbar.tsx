@@ -117,9 +117,9 @@ const renderLinks = () => {
 };
 
   return (
-    <nav className="bg-white shadow-md fixed top-0 left-0 w-full z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-        <div className="text-2xl font-bold text-brown-600">
+    <nav className="bg-cafe-primary shadow-lg fixed top-0 left-0 w-full z-50">
+      <div className="cafe-container flex justify-between items-center h-16">
+        <div className="text-2xl font-bold text-cafe-light">
           <Link to="/">กงสีคาเฟ่</Link>
         </div>
 
@@ -129,7 +129,7 @@ const renderLinks = () => {
             <Link
               key={index}
               to={link.to}
-              className="hover:text-brown-500 font-medium"
+              className="text-cafe-light hover:text-cafe-secondary font-medium transition duration-300"
             >
               {link.label}
             </Link>
@@ -137,19 +137,19 @@ const renderLinks = () => {
 
           {loading ? (
             <div className="w-24 h-8 flex items-center justify-center">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-cafe-light"></div>
             </div>
           ) : !loggedIn ? (
             <button
               onClick={openLoginModal}
-              className="text-sm text-blue-600 border border-blue-600 px-3 py-1 rounded hover:bg-blue-100"
+              className="btn-cafe-outline text-cafe-light border-cafe-light hover:bg-cafe-light hover:text-cafe-primary"
             >
               Login / Register
             </button>
           ) : (
             <button
               onClick={handleLogout}
-              className="text-sm text-red-600 border border-red-600 px-3 py-1 rounded hover:bg-red-100"
+              className="btn-cafe bg-red-600 hover:bg-red-700 text-white border-red-600"
             >
               Logout
             </button>
@@ -164,47 +164,47 @@ const renderLinks = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      {navOpen && (
-        <div className="md:hidden bg-white px-4 pt-4 pb-2 space-y-2">
-          {renderLinks().map((link, index) => (
-            <Link
-              key={index}
-              to={link.to}
-              onClick={toggleNav}
-              className="block text-brown-600 font-medium"
-            >
-              {link.label}
-            </Link>
-          ))}
+        {/* Mobile Menu */}
+        {navOpen && (
+          <div className="md:hidden bg-cafe-primary px-4 pt-4 pb-2 space-y-2">
+            {renderLinks().map((link, index) => (
+              <Link
+                key={index}
+                to={link.to}
+                onClick={toggleNav}
+                className="block text-cafe-light font-medium"
+              >
+                {link.label}
+              </Link>
+            ))}
 
-          {loading ? (
-            <div className="w-24 h-8 flex items-center justify-center">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-            </div>
-          ) : !loggedIn ? (
-            <button
-              onClick={() => {
-                toggleNav();
-                openLoginModal();
-              }}
-              className="block text-left text-sm text-blue-600 mt-2 border border-blue-600 px-3 py-1 rounded hover:bg-blue-100"
-            >
-              Login / Register
-            </button>
-          ) : (
-            <button
-              onClick={() => {
-                toggleNav();
-                handleLogout();
-              }}
-              className="block text-left text-sm text-red-600 mt-2 border border-red-600 px-3 py-1 rounded hover:bg-red-100"
-            >
-              Logout
-            </button>
-          )}
-        </div>
-      )}
+            {loading ? (
+              <div className="w-24 h-8 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-cafe-light"></div>
+              </div>
+            ) : !loggedIn ? (
+              <button
+                onClick={() => {
+                  toggleNav();
+                  openLoginModal();
+                }}
+                className="block text-left text-sm text-cafe-light mt-2 border border-cafe-light px-3 py-1 rounded hover:bg-cafe-light hover:text-cafe-primary"
+              >
+                Login / Register
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  toggleNav();
+                  handleLogout();
+                }}
+                className="block text-left text-sm text-red-300 mt-2 border border-red-300 px-3 py-1 rounded hover:bg-red-300 hover:text-cafe-primary"
+              >
+                Logout
+              </button>
+            )}
+          </div>
+        )}
 
       {/* Login Modal */}
       {showLogin && (

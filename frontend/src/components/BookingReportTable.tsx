@@ -58,70 +58,97 @@ const BookingReportTable = () => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow p-4">
-      <h2 className="text-xl font-bold mb-4">Booking Report</h2>
+    <div className="cafe-card p-6 fade-in">
+      <h2 className="cafe-subheading mb-6">รายงานการจอง</h2>
       
       {/* Date Filter Controls */}
-      <div className="mb-4 flex flex-wrap gap-4 items-end">
+      <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 bg-cafe-light p-6 rounded-xl">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">From Date</label>
+          <label className="cafe-label mb-2">จากวันที่</label>
           <input
             type="date"
             value={fromDate}
             onChange={(e) => setFromDate(e.target.value)}
-            className="border rounded-md px-3 py-2"
+            className="cafe-input w-full"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">To Date</label>
+          <label className="cafe-label mb-2">ถึงวันที่</label>
           <input
             type="date"
             value={toDate}
             onChange={(e) => setToDate(e.target.value)}
-            className="border rounded-md px-3 py-2"
+            className="cafe-input w-full"
           />
         </div>
-        <div className="flex gap-2">
-          <button
-            onClick={handleFilter}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
-          >
-            Filter
-          </button>
-          <button
-            onClick={handleReset}
-            className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md"
-          >
-            Reset
-          </button>
+        <div className="flex flex-col justify-end gap-2">
+          <div className="flex gap-2">
+            <button
+              onClick={handleFilter}
+              className="btn-cafe flex-1"
+            >
+              กรองข้อมูล
+            </button>
+            <button
+              onClick={handleReset}
+              className="btn-cafe-outline flex-1"
+            >
+              รีเซ็ต
+            </button>
+          </div>
         </div>
       </div>
       
-      <div className="overflow-x-auto">
-        <table className="w-full table-auto text-left border">
+      <div className="overflow-x-auto rounded-xl border border-cafe-secondary">
+        <table className="w-full text-left">
           <thead>
-            <tr className="bg-gray-100">
-              <th className="p-2">ID</th>
-              <th className="p-2">User</th>
-              <th className="p-2">Table</th>
-              <th className="p-2">Date</th>
-              <th className="p-2">Time</th>
-              <th className="p-2">People</th>
-              <th className="p-2">Status</th>
+            <tr className="bg-cafe-primary text-cafe-light">
+              <th className="p-4 font-semibold rounded-tl-xl">ID</th>
+              <th className="p-4 font-semibold">ผู้ใช้</th>
+              <th className="p-4 font-semibold">โต๊ะ</th>
+              <th className="p-4 font-semibold">วันที่</th>
+              <th className="p-4 font-semibold">เวลา</th>
+              <th className="p-4 font-semibold">จำนวนคน</th>
+              <th className="p-4 font-semibold rounded-tr-xl">สถานะ</th>
             </tr>
           </thead>
           <tbody>
-            {bookings.map((booking) => (
-              <tr key={booking.table_booking_id} className="border-t">
-                <td className="p-2">{booking.table_booking_id}</td>
-                <td className="p-2">{booking.user_name}</td>
-                <td className="p-2">{booking.table_id}</td>
-                <td className="p-2">{formatDate(booking.booking_date)}</td>
-                <td className="p-2">{booking.booking_time}</td>
-                <td className="p-2">{booking.number_of_people}</td>
-                <td className="p-2">{booking.status}</td>
+            {bookings.length > 0 ? (
+              bookings.map((booking, index) => (
+                <tr 
+                  key={booking.table_booking_id} 
+                  className={`border-t border-cafe-secondary ${index % 2 === 0 ? 'bg-cafe-light' : 'bg-white'}`}
+                >
+                  <td className="p-4 cafe-text font-medium">{booking.table_booking_id}</td>
+                  <td className="p-4 cafe-text">{booking.user_name}</td>
+                  <td className="p-4 cafe-text">{booking.table_id}</td>
+                  <td className="p-4 cafe-text">{formatDate(booking.booking_date)}</td>
+                  <td className="p-4 cafe-text">{booking.booking_time}</td>
+                  <td className="p-4 cafe-text">{booking.number_of_people}</td>
+                  <td className="p-4 cafe-text">
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                      booking.status === 'confirmed' 
+                        ? 'bg-green-100 text-green-800' 
+                        : booking.status === 'pending' 
+                          ? 'bg-yellow-100 text-yellow-800' 
+                          : 'bg-red-100 text-red-800'
+                    }`}>
+                      {booking.status === 'confirmed' 
+                        ? 'ยืนยันแล้ว' 
+                        : booking.status === 'pending' 
+                          ? 'รอดำเนินการ' 
+                          : 'ยกเลิก'}
+                    </span>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={7} className="p-12 text-center cafe-text-light">
+                  ไม่พบข้อมูลการจอง
+                </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>

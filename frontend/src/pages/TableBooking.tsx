@@ -84,103 +84,120 @@ const TableBooking = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
+    <div className="pt-20 bg-cafe-background min-h-screen">
       <Navbar />
-      <h2 className="text-2xl font-bold mb-4">📅 จองโต๊ะร้านอาหาร</h2>
-
-      <div className="mb-4">
-        <label className="block text-sm mb-1">เลือกวันที่</label>
-        <input
-          type="date"
-          className="border rounded w-full p-2"
-          value={bookingDate}
-          onChange={(e) => setBookingDate(e.target.value)}
-        />
-      </div>
-
-      <div className="mb-4">
-        <label className="block text-sm mb-1">เลือกเวลา</label>
-        <select
-          className="border rounded w-full p-2"
-          value={timeSlot}
-          onChange={(e) => setTimeSlot(e.target.value)}
-        >
-          <option value="">-- เลือกเวลา --</option>
-          <option value="18:00-20:00">18:00 - 20:00</option>
-          <option value="20:00-22:00">20:00 - 22:00</option>
-          <option value="22:00-00:00">22:00 - 00:00</option>
-        </select>
-      </div>
-
-      <div className="mb-4">
-        <label className="block text-sm mb-1">จำนวนคน</label>
-        <input
-          type="number"
-          className="border rounded w-full p-2"
-          value={numberOfPeople || ''}
-          onChange={(e) => setNumberOfPeople(parseInt(e.target.value))}
-          min={1}
-        />
-      </div>
-
-      <div className="mb-4">
-        <label className="block text-sm mb-1">คำขอพิเศษ</label>
-        <textarea
-          rows={2}
-          className="border rounded w-full p-2"
-          placeholder="เช่น ขอใกล้หน้าต่าง หรือ ขอเก้าอี้เสริมสำหรับเด็ก"
-          value={specialRequest}
-          onChange={(e) => setSpecialRequest(e.target.value)}
-        />
-      </div>
-
-      <div className="mb-4">
-        <label className="block text-sm mb-2">เลือกโต๊ะ</label>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {availableTables.length === 0 ? (
-            <p className="col-span-full text-gray-500">ไม่มีโต๊ะว่างในช่วงเวลานี้</p>
-          ) : (
-            availableTables.map((table) => (
+      
+      <section className="cafe-section">
+        <div className="cafe-container max-w-4xl">
+          <h2 className="cafe-heading mb-8">📅 จองโต๊ะร้านอาหาร</h2>
+          
+          <div className="cafe-card p-6 mb-8 fade-in">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="cafe-label mb-2">เลือกวันที่</label>
+                <input
+                  type="date"
+                  className="cafe-input w-full"
+                  value={bookingDate}
+                  onChange={(e) => setBookingDate(e.target.value)}
+                />
+              </div>
+              
+              <div>
+                <label className="cafe-label mb-2">เลือกเวลา</label>
+                <select
+                  className="cafe-input w-full"
+                  value={timeSlot}
+                  onChange={(e) => setTimeSlot(e.target.value)}
+                >
+                  <option value="">-- เลือกเวลา --</option>
+                  <option value="18:00-20:00">18:00 - 20:00</option>
+                  <option value="20:00-22:00">20:00 - 22:00</option>
+                  <option value="22:00-00:00">22:00 - 00:00</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="cafe-label mb-2">จำนวนคน</label>
+                <input
+                  type="number"
+                  className="cafe-input w-full"
+                  value={numberOfPeople || ''}
+                  onChange={(e) => setNumberOfPeople(parseInt(e.target.value))}
+                  min={1}
+                />
+              </div>
+              
+              <div>
+                <label className="cafe-label mb-2">คำขอพิเศษ</label>
+                <textarea
+                  rows={2}
+                  className="cafe-input w-full"
+                  placeholder="เช่น ขอใกล้หน้าต่าง หรือ ขอเก้าอี้เสริมสำหรับเด็ก"
+                  value={specialRequest}
+                  onChange={(e) => setSpecialRequest(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+          
+          <div className="cafe-card p-6 mb-8 fade-in" style={{ animationDelay: '0.1s' }}>
+            <h3 className="cafe-subheading mb-6">เลือกโต๊ะ</h3>
+            
+            <div className="mb-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {availableTables.length === 0 ? (
+                  <p className="col-span-full cafe-text text-center py-8">ไม่มีโต๊ะว่างในช่วงเวลานี้</p>
+                ) : (
+                  availableTables.map((table) => (
+                    <button
+                      key={table.table_id}
+                      onClick={() => !table.isBooked && setSelectedTableId(table.table_id)}
+                      disabled={table.isBooked}
+                      className={`p-4 rounded-xl text-center transition-all duration-300 transform hover:scale-105 ${
+                        table.isBooked
+                          ? 'bg-gray-200 text-gray-500 cursor-not-allowed opacity-50'
+                          : selectedTableId === table.table_id
+                            ? 'bg-cafe-primary text-cafe-light shadow-lg'
+                            : 'bg-cafe-light hover:bg-cafe-secondary border border-cafe-secondary'
+                      }`}
+                    >
+                      <div className="font-bold">โต๊ะ {table.table_number}</div>
+                      <div className="text-sm mt-1">{table.seats} ที่นั่ง</div>
+                      {table.isBooked && <div className="text-xs mt-1">ถูกจองแล้ว</div>}
+                    </button>
+                  ))
+                )}
+              </div>
+            </div>
+            
             <button
-              key={table.table_id}
-              onClick={() => !table.isBooked && setSelectedTableId(table.table_id)}
-              disabled={table.isBooked}
-              className={`p-4 border rounded-lg text-center transition ${
-                table.isBooked
-                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                  : selectedTableId === table.table_id
-                    ? 'bg-green-500 text-white'
-                    : 'hover:bg-gray-100'
-              }`}
+              onClick={handleBooking}
+              disabled={loading}
+              className={`btn-cafe w-full py-3 text-lg ${loading ? 'opacity-75 cursor-not-allowed' : ''}`}
             >
-              โต๊ะ {table.table_number}
-              <br />
-              {table.seats} ที่นั่ง
-              {table.isBooked && <div className="text-xs mt-1">ถูกจองแล้ว</div>}
+              {loading ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  กำลังจอง...
+                </div>
+              ) : (
+                'ยืนยันการจองโต๊ะ'
+              )}
             </button>
-            ))
-          )}
+          </div>
         </div>
-      </div>
+      </section>
 
-      <button
-        onClick={handleBooking}
-        disabled={loading}
-        className={`w-full py-2 rounded-lg mt-4 transition text-white ${
-          loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
-        }`}
-      >
-        {loading ? 'กำลังจอง...' : 'ยืนยันการจองโต๊ะ'}
-      </button>
-
-      {/* Optional success modal */}
+      {/* Success modal */}
       {showSuccessModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-md text-center">
-            <h3 className="text-xl font-bold mb-2">🎉 จองสำเร็จ!</h3>
-            <p className="mb-4">ขอบคุณที่ใช้บริการ</p>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 fade-in">
+          <div className="cafe-card p-8 max-w-md w-full text-center">
+            <div className="text-5xl mb-4">🎉</div>
+            <h3 className="cafe-heading mb-4">จองสำเร็จ!</h3>
+            <p className="cafe-text mb-6">ขอบคุณที่ใช้บริการ เราหวังว่าจะได้พบคุณเร็วๆ นี้</p>
             <button
-              className="bg-green-600 text-white px-4 py-2 rounded"
+              className="btn-cafe w-full"
               onClick={() => setShowSuccessModal(false)}
             >
               ปิด

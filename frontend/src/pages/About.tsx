@@ -13,39 +13,41 @@ const menuItems = [
 export default function About() {
 
   return (
-    <div className="pt-20">
+    <div className="pt-20 bg-cafe-background min-h-screen">
       <Navbar />
 
       <section className="h-screen bg-[url('https://everydaydocuments.com/article/images/2023-how-to-find-windows-spotlight-wallpapers/2023-how-to-find-windows-spotlight-wallpapers.jpg')] bg-cover bg-center flex items-center justify-center">
         <h1 className="text-white text-5xl md:text-6xl font-bold backdrop-blur-sm p-4 bg-black/50 rounded-xl">
-          About ค้าบ
+          เกี่ยวกับเรา
         </h1>
       </section>
 
-      <section className="py-16 px-6 bg-white text-center">
-        <h2 className="text-3xl font-semibold mb-6">เมนู</h2>
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-        {menuItems.map((item, i) => (
-        <div
-            key={i}
-            className="shadow-lg rounded-xl overflow-hidden hover:scale-105 transition"
-        >
-            <img
-            src={item.image}
-            alt={item.name}
-            className="w-full h-40 object-cover"
-            />
-            <div className="p-4">
-            <h3 className="text-xl font-bold">{item.name}</h3>
-            <p className="text-gray-600">อุ อิ อา อุ๊ อิ อา อุ๊ เอะ</p>
-            </div>
-        </div>
-        ))}
+      <section className="cafe-section py-16">
+        <div className="cafe-container text-center">
+          <h2 className="cafe-heading mb-12">เมนูแนะนำ</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {menuItems.map((item, i) => (
+              <div
+                key={i}
+                className="cafe-card overflow-hidden fade-in hover:scale-105 transition-transform duration-300"
+                style={{ animationDelay: `${i * 0.1}s` }}
+              >
+                <div className="h-48 overflow-hidden">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-cover transition duration-500 ease-in-out transform hover:scale-110"
+                  />
+                </div>
+                <div className="p-6">
+                  <h3 className="text-2xl font-bold text-cafe-primary mb-3">{item.name}</h3>
+                  <p className="cafe-text-light">เครื่องดื่มรสเลิศที่คุณต้องหลงรัก</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
-
-
-      
     </div>
   );
 }

@@ -1,18 +1,104 @@
-/* body {
+@import './styles/theme.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--cafe-background);
+  color: var(--cafe-text);
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
-} */
+}
 
+/* Custom utility classes */
+.cafe-container {
+  max-width: 80rem; /* max-w-7xl */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem; /* px-4 */
+  padding-right: 1rem; /* px-4 */
+}
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@media (min-width: 640px) { /* sm */
+  .cafe-container {
+    padding-left: 1.5rem; /* sm:px-6 */
+    padding-right: 1.5rem; /* sm:px-6 */
+  }
+}
+
+@media (min-width: 1024px) { /* lg */
+  .cafe-container {
+    padding-left: 2rem; /* lg:px-8 */
+    padding-right: 2rem; /* lg:px-8 */
+  }
+}
+
+.cafe-section {
+  padding-top: 4rem; /* py-16 */
+  padding-bottom: 4rem; /* py-16 */
+  padding-left: 1rem; /* px-4 */
+  padding-right: 1rem; /* px-4 */
+}
+
+@media (min-width: 640px) { /* sm */
+  .cafe-section {
+    padding-left: 1.5rem; /* sm:px-6 */
+    padding-right: 1.5rem; /* sm:px-6 */
+  }
+}
+
+@media (min-width: 1024px) { /* lg */
+  .cafe-section {
+    padding-left: 2rem; /* lg:px-8 */
+    padding-right: 2rem; /* lg:px-8 */
+  }
+}
+
+.cafe-heading {
+  font-size: 1.875rem; /* text-3xl */
+  line-height: 2.25rem; /* text-3xl */
+  font-weight: 700; /* font-bold */
+  color: var(--cafe-primary); /* text-cafe-primary */
+  margin-bottom: 1.5rem; /* mb-6 */
+  text-align: center;
+}
+
+@media (min-width: 768px) { /* md */
+  .cafe-heading {
+    font-size: 2.25rem; /* md:text-4xl */
+    line-height: 2.5rem; /* md:text-4xl */
+  }
+}
+
+.cafe-subheading {
+  font-size: 1.25rem; /* text-xl */
+  line-height: 1.75rem; /* text-xl */
+  font-weight: 600; /* font-semibold */
+  color: var(--cafe-text-light); /* text-cafe-text-light */
+  margin-bottom: 1rem; /* mb-4 */
+}
+
+@media (min-width: 768px) { /* md */
+  .cafe-subheading {
+    font-size: 1.5rem; /* md:text-2xl */
+    line-height: 2rem; /* md:text-2xl */
+  }
+}
+
+.cafe-text {
+  color: var(--cafe-text);
+}
+
+.cafe-text-light {
+  color: var(--cafe-text-light);
+}

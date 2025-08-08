@@ -1,0 +1,121 @@
+/* Café Theme Color Palette */
+:root {
+  --cafe-primary: #8B4513; /* SaddleBrown */
+  --cafe-primary-light: #A0522D; /* Sienna */
+  --cafe-primary-dark: #5D2906; /* Dark Brown */
+  --cafe-secondary: #D2B48C; /* Tan */
+  --cafe-accent: #CD853F; /* Peru */
+  --cafe-light: #F5DEB3; /* Wheat */
+  --cafe-background: #FFF8F0; /* Light cream */
+  --cafe-text: #3E2723; /* Dark brown */
+  --cafe-text-light: #5D4037; /* Medium brown */
+}
+
+/* Custom utility classes */
+.bg-cafe-primary { background-color: var(--cafe-primary); }
+.bg-cafe-primary-light { background-color: var(--cafe-primary-light); }
+.bg-cafe-primary-dark { background-color: var(--cafe-primary-dark); }
+.bg-cafe-secondary { background-color: var(--cafe-secondary); }
+.bg-cafe-accent { background-color: var(--cafe-accent); }
+.bg-cafe-light { background-color: var(--cafe-light); }
+.bg-cafe-background { background-color: var(--cafe-background); }
+
+text-cafe-primary { color: var(--cafe-primary); }
+text-cafe-primary-light { color: var(--cafe-primary-light); }
+text-cafe-primary-dark { color: var(--cafe-primary-dark); }
+text-cafe-secondary { color: var(--cafe-secondary); }
+text-cafe-accent { color: var(--cafe-accent); }
+text-cafe-light { color: var(--cafe-light); }
+text-cafe-text { color: var(--cafe-text); }
+text-cafe-text-light { color: var(--cafe-text-light); }
+
+.border-cafe-primary { border-color: var(--cafe-primary); }
+.border-cafe-primary-light { border-color: var(--cafe-primary-light); }
+.border-cafe-primary-dark { border-color: var(--cafe-primary-dark); }
+.border-cafe-secondary { border-color: var(--cafe-secondary); }
+.border-cafe-accent { border-color: var(--cafe-accent); }
+.border-cafe-light { border-color: var(--cafe-light); }
+
+/* Custom button styles */
+.btn-cafe {
+  background-color: var(--cafe-primary);
+  color: white;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease-in-out;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-cafe:hover {
+  background-color: var(--cafe-primary-light);
+  transform: translateY(-0.125rem);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-cafe-outline {
+  background-color: transparent;
+  border: 2px solid var(--cafe-primary);
+  color: var(--cafe-primary);
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.btn-cafe-outline:hover {
+  background-color: var(--cafe-primary);
+  color: white;
+  transform: translateY(-0.125rem);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Card styles */
+.cafe-card {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+}
+
+.cafe-card:hover {
+  transform: translateY(-0.25rem);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Input styles */
+.cafe-input {
+  border: 2px solid var(--cafe-secondary);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  outline: none;
+}
+
+.cafe-input:focus {
+  border-color: var(--cafe-primary);
+  box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.2);
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .cafe-card {
+    @apply rounded-xl;
+  }
+  
+  .btn-cafe, .btn-cafe-outline {
+    @apply py-1.5 px-3 text-sm;
+  }
+}

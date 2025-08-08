@@ -97,76 +97,138 @@ export default function LoginModal({ onClose, onLoginSuccess }: Props) {
 
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white p-8 rounded-lg w-full max-w-md shadow-lg">
-        <button className="text-right float-right text-gray-500" onClick={onClose}>✕</button>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 fade-in">
+      <div className="cafe-card p-8 w-full max-w-md">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="cafe-heading">
+            {step === 'login' && 'เข้าสู่ระบบ'}
+            {step === 'register' && 'สมัครสมาชิก'}
+            {step === 'forgot' && 'ลืมรหัสผ่าน'}
+          </h2>
+          <button 
+            className="text-2xl text-cafe-text-light hover:text-cafe-primary"
+            onClick={onClose}
+          >
+            ✕
+          </button>
+        </div>
 
         {step === 'login' && (
-          <>
-            <h2 className="text-xl font-bold mb-4">Login</h2>
-            <input 
-              className="w-full p-2 border mb-3 rounded"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+          <div className="space-y-4">
+            <div>
+              <label className="cafe-label mb-2">อีเมล</label>
+              <input 
+                className="cafe-input w-full"
+                placeholder="กรอกอีเมลของคุณ"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
-            <input 
-              className="w-full p-2 border mb-3 rounded"
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              />
-              
-            <button className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700" onClick={handleLogin}>Login</button>
-            
-            <div className="mt-4 text-sm flex justify-between">
-              <span onClick={() => setStep('register')} className="text-blue-600 cursor-pointer">Register</span>
-              <span onClick={() => setStep('forgot')} className="text-blue-600 cursor-pointer">Forgot Password?</span>
             </div>
-          </>
+            
+            <div>
+              <label className="cafe-label mb-2">รหัสผ่าน</label>
+              <input 
+                className="cafe-input w-full"
+                type="password"
+                placeholder="กรอกรหัสผ่านของคุณ"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+              
+            <button 
+              className="btn-cafe w-full py-3 mt-4"
+              onClick={handleLogin}
+            >
+              เข้าสู่ระบบ
+            </button>
+            
+            <div className="flex justify-between pt-4">
+              <button 
+                onClick={() => setStep('register')} 
+                className="cafe-text text-cafe-primary hover:underline"
+              >
+                สมัครสมาชิก
+              </button>
+              <button 
+                onClick={() => setStep('forgot')} 
+                className="cafe-text text-cafe-primary hover:underline"
+              >
+                ลืมรหัสผ่าน?
+              </button>
+            </div>
+          </div>
         )}
 
         {step === 'register' && (
-          <>
-            <h2 className="text-xl font-bold mb-4">Register</h2>
-            {/* <input className="w-full p-2 border mb-3 rounded" placeholder="Name" /> */}
-            <input 
-              className="w-full p-2 border mb-3 rounded"
-              placeholder="Email"
-              value={regEmail}
-              onChange={(e) => setRegEmail(e.target.value)} />
-
-            <input 
-              className="w-full p-2 border mb-3 rounded" 
-              type="password"
-              placeholder="Password"
-              value={regPassword}
-              onChange={(e) => setRegPassword(e.target.value)}
+          <div className="space-y-4">
+            <div>
+              <label className="cafe-label mb-2">อีเมล</label>
+              <input 
+                className="cafe-input w-full"
+                placeholder="กรอกอีเมลของคุณ"
+                value={regEmail}
+                onChange={(e) => setRegEmail(e.target.value)} 
               />
-            <button className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700" onClick={handleRegister}>Create Account</button>
-
-            <div className="mt-4 text-sm text-center">
-              <span onClick={() => setStep('login')} className="text-blue-600 cursor-pointer">Back to Login</span>
             </div>
-          </>
+
+            <div>
+              <label className="cafe-label mb-2">รหัสผ่าน</label>
+              <input 
+                className="cafe-input w-full" 
+                type="password"
+                placeholder="สร้างรหัสผ่าน"
+                value={regPassword}
+                onChange={(e) => setRegPassword(e.target.value)}
+              />
+            </div>
+            
+            <button 
+              className="btn-cafe w-full py-3 mt-4"
+              onClick={handleRegister}
+            >
+              สร้างบัญชี
+            </button>
+
+            <div className="text-center pt-4">
+              <button 
+                onClick={() => setStep('login')} 
+                className="cafe-text text-cafe-primary hover:underline"
+              >
+                กลับสู่หน้าเข้าสู่ระบบ
+              </button>
+            </div>
+          </div>
         )}
 
         {step === 'forgot' && (
-          <>
-            <h2 className="text-xl font-bold mb-4">Forgot Password</h2>
-            <input 
-              className="w-full p-2 border mb-3 rounded" 
-              placeholder="Enter your email"
-              value={forgotEmail}
-              onChange={(e) => setForgotEmail(e.target.value)}
+          <div className="space-y-4">
+            <div>
+              <label className="cafe-label mb-2">อีเมล</label>
+              <input 
+                className="cafe-input w-full" 
+                placeholder="กรอกอีเมลของคุณ"
+                value={forgotEmail}
+                onChange={(e) => setForgotEmail(e.target.value)}
               />
-
-            <button className="w-full bg-purple-600 text-white p-2 rounded hover:bg-purple-700" onClick={handleForgotPassword}>Send Reset Link</button>
-            <div className="mt-4 text-sm text-center">
-              <span onClick={() => setStep('login')} className="text-blue-600 cursor-pointer">Back to Login</span>
             </div>
-          </>
+
+            <button 
+              className="btn-cafe w-full py-3 mt-4"
+              onClick={handleForgotPassword}
+            >
+              ส่งลิงก์รีเซ็ต
+            </button>
+            
+            <div className="text-center pt-4">
+              <button 
+                onClick={() => setStep('login')} 
+                className="cafe-text text-cafe-primary hover:underline"
+              >
+                กลับสู่หน้าเข้าสู่ระบบ
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>

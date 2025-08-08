@@ -22,24 +22,40 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20 p-6 bg-white rounded shadow">
-      <h2 className="text-xl font-bold mb-4">Reset Password</h2>
-      <input
-        className="w-full p-2 border mb-3 rounded"
-        placeholder="Enter your reset token"
-        value={token}
-        onChange={(e) => setToken(e.target.value)}
-      />
-      <input
-        className="w-full p-2 border mb-3 rounded"
-        type="password"
-        placeholder="New Password"
-        value={newPassword}
-        onChange={(e) => setNewPassword(e.target.value)}
-      />
-      <button onClick={handleReset} className="w-full bg-green-600 text-white p-2 rounded">
-        Reset Password
-      </button>
+    <div className="pt-20 bg-cafe-background min-h-screen flex items-center justify-center p-4">
+      <div className="cafe-card p-8 max-w-md w-full fade-in">
+        <h2 className="cafe-heading mb-6 text-center">รีเซ็ตรหัสผ่าน</h2>
+        
+        <div className="space-y-4">
+          <div>
+            <label className="cafe-label mb-2">โทเค็นรีเซ็ต</label>
+            <input
+              className="cafe-input w-full"
+              placeholder="กรอกโทเค็นรีเซ็ตของคุณ"
+              value={token}
+              onChange={(e) => setToken(e.target.value)}
+            />
+          </div>
+          
+          <div>
+            <label className="cafe-label mb-2">รหัสผ่านใหม่</label>
+            <input
+              className="cafe-input w-full"
+              type="password"
+              placeholder="รหัสผ่านใหม่"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+          </div>
+          
+          <button 
+            onClick={handleReset} 
+            className="btn-cafe w-full mt-6 py-3 text-lg"
+          >
+            รีเซ็ตรหัสผ่าน
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

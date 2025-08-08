@@ -56,63 +56,96 @@ export default function ProductUpdateModal({ product, onClose, onUpdated }: Prop
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-      <div className="bg-white p-6 w-full max-w-md shadow-lg rounded-xl overflow-hidden hover:scale-105 transition">
-        <h2 className="text-xl font-bold mb-4">Edit Product</h2>
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Name"
-            className="w-full border p-2 rounded"
-            required
-          />
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="Description"
-            className="w-full border p-2 rounded"
-            required
-          />
-          <input
-            type="number"
-            name="price"
-            value={formData.price}
-            onChange={handleChange}
-            placeholder="Price"
-            className="w-full border p-2 rounded"
-            required
-          />
-          <input
-            type="text"
-            name="image"
-            value={formData.image ?? ''}
-            onChange={handleChange}
-            placeholder="Image URL"
-            className="w-full border p-2 rounded"
-          />
-          <input
-            type="number"
-            name="stock"
-            value={formData.stock}
-            onChange={handleChange}
-            placeholder="Stock"
-            className="w-full border p-2 rounded"
-            required
-          />
-          <div className="flex justify-end gap-2 pt-2">
-            <button type="button" onClick={onClose} className="px-4 py-2 rounded bg-gray-300">
-              Cancel
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 fade-in">
+      <div className="cafe-card p-6 w-full max-w-md">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="cafe-heading">แก้ไขสินค้า</h2>
+          <button 
+            className="text-2xl text-cafe-text-light hover:text-cafe-primary"
+            onClick={onClose}
+          >
+            ✕
+          </button>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="cafe-label mb-2">ชื่อสินค้า</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="กรอกชื่อสินค้า"
+              className="cafe-input w-full"
+              required
+            />
+          </div>
+          
+          <div>
+            <label className="cafe-label mb-2">คำอธิบาย</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="กรอกรายละเอียดสินค้า"
+              className="cafe-input w-full min-h-[100px]"
+              required
+            />
+          </div>
+          
+          <div>
+            <label className="cafe-label mb-2">ราคา (บาท)</label>
+            <input
+              type="number"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              placeholder="ราคาสินค้า"
+              className="cafe-input w-full"
+              required
+            />
+          </div>
+          
+          <div>
+            <label className="cafe-label mb-2">ลิงก์รูปภาพ</label>
+            <input
+              type="text"
+              name="image"
+              value={formData.image ?? ''}
+              onChange={handleChange}
+              placeholder="ลิงก์รูปภาพสินค้า"
+              className="cafe-input w-full"
+            />
+          </div>
+          
+          <div>
+            <label className="cafe-label mb-2">จำนวนในสต๊อก</label>
+            <input
+              type="number"
+              name="stock"
+              value={formData.stock}
+              onChange={handleChange}
+              placeholder="จำนวนสินค้าในสต๊อก"
+              className="cafe-input w-full"
+              required
+            />
+          </div>
+          
+          <div className="flex justify-end gap-3 pt-4">
+            <button 
+              type="button" 
+              onClick={onClose} 
+              className="btn-cafe-outline px-6 py-2"
+            >
+              ยกเลิก
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded bg-blue-600 text-white"
+              className="btn-cafe px-6 py-2"
               disabled={loading}
             >
-              {loading ? 'Updating...' : 'Update'}
+              {loading ? 'กำลังอัปเดต...' : 'อัปเดต'}
             </button>
           </div>
         </form>

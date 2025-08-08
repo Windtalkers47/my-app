@@ -73,46 +73,83 @@ const Cart = () => {
 
 
   return (
-    <div className="p-4">
+    <div className="pt-20 bg-cafe-background min-h-screen">
       <Navbar />
-      <h2 className="text-xl font-bold mb-4">🛒 Your Cart</h2>
-      {items.length === 0 ? (
-        <p>Your cart is empty.</p>
-      ) : (
-        <div className="space-y-4">
-          {items.map((item) => (
-            <div key={item.cart_item_id} className="border p-4 rounded shadow">
-              <h3>🧺 {item.name}</h3>
-              <p>💰 Price: {item.price} ฿</p>
-              <p>📦 Total: {item.price * item.quantity} ฿</p>
-
-              <div className="flex gap-2 items-center mt-2">
+      
+      <section className="cafe-section">
+        <div className="cafe-container">
+          <h2 className="cafe-heading mb-8">🛒 ตะกร้าของคุณ</h2>
+          
+          {items.length === 0 ? (
+            <div className="cafe-card p-12 text-center">
+              <h3 className="cafe-subheading mb-4">ตะกร้าของคุณว่างเปล่า</h3>
+              <p className="cafe-text-light mb-6">เพิ่มสินค้าที่คุณชื่นชอบลงในตะกร้า</p>
+              <button
+                className="btn-cafe"
+                onClick={() => navigate('/products')}
+              >
+                ดูสินค้า
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {items.map((item) => (
+                <div key={item.cart_item_id} className="cafe-card p-6 fade-in">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                      <h3 className="text-xl font-bold text-cafe-primary mb-2">🧺 {item.name}</h3>
+                      <p className="cafe-text mb-1">💰 ราคา: {item.price} ฿</p>
+                      <p className="cafe-text font-semibold">📦 รวม: {item.price * item.quantity} ฿</p>
+                    </div>
+                    
+                    <div className="flex flex-col sm:flex-row items-center gap-4">
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => handleUpdateQuantity(item.cart_item_id, item.quantity - 1)}
+                          className="btn-cafe-outline w-8 h-8 flex items-center justify-center p-0"
+                          disabled={item.quantity <= 1}
+                        >
+                          −
+                        </button>
+                        <span className="cafe-text font-semibold text-lg w-8 text-center">{item.quantity}</span>
+                        <button
+                          onClick={() => handleUpdateQuantity(item.cart_item_id, item.quantity + 1)}
+                          className="btn-cafe-outline w-8 h-8 flex items-center justify-center p-0"
+                        >
+                          ＋
+                        </button>
+                      </div>
+                      
+                      <button
+                        onClick={() => removeItem(item.cart_item_id)}
+                        className="btn-cafe bg-red-600 hover:bg-red-700 whitespace-nowrap"
+                      >
+                        ลบ
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              
+              <div className="cafe-card p-6 mt-8">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-2xl font-bold text-cafe-primary">ยอดรวม</h3>
+                  <p className="text-2xl font-bold text-cafe-primary">
+                    {items.reduce((total, item) => total + (item.price * item.quantity), 0)} ฿
+                  </p>
+                </div>
+                
                 <button
-                  onClick={() => handleUpdateQuantity(item.cart_item_id, item.quantity - 1)}
-                  className="px-2 bg-gray-200 rounded"
-                  disabled={item.quantity <= 1}
-                >−</button>
-                <span>{item.quantity}</span>
-                <button
-                  onClick={() => handleUpdateQuantity(item.cart_item_id, item.quantity + 1)}
-                  className="px-2 bg-gray-200 rounded"
-                >＋</button>
-                <button
-                  onClick={() => removeItem(item.cart_item_id)}
-                  className="ml-auto bg-red-500 text-white px-3 py-1 rounded"
-                >Remove</button>
+                  onClick={handleCheckout}
+                  className="btn-cafe w-full py-4 text-lg"
+                >
+                  💳 ชำระเงิน
+                </button>
               </div>
             </div>
-          ))}
-          <button
-            onClick={handleCheckout}
-            className="bg-green-600 text-white p-3 rounded mt-6 w-full"
-          >
-            {/* 💳 Checkout & Pay */}
-            💳 ชำระเงิน
-          </button>
+          )}
         </div>
-      )}
+      </section>
     </div>
   );
 };

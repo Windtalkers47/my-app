@@ -31,27 +31,26 @@ const ProductList = () => {
   };
 
   return (
-    <div className="p-4">
+    <div className="pt-20 bg-cafe-background min-h-screen">
       <Navbar />
       
-      <h2 className="text-xl font-bold mb-4">Products</h2>
-      {message && <div className="mb-4 text-sm text-blue-600">{message}</div>}
-      <div className="grid grid-cols-2 gap-4">
-        {products.map((p) => (
-          <div key={p.id} className="border p-4 rounded shadow">
-            <img src={p.image || undefined} alt={p.name} className="w-full h-40 object-cover mb-2" />
-            <h3 className="font-semibold">{p.name}</h3>
-            <p>{p.description}</p>
-            <p className="text-green-600 font-bold">{p.price} THB</p>
-            <button
-              onClick={() => addToCart(p.id)}
-              className="bg-yellow-500 mt-2 px-4 py-1 rounded text-white"
-            >
-              Add to Cart
-            </button>
+      <section className="cafe-section">
+        <div className="cafe-container">
+          <h2 className="cafe-heading mb-8">รายการสินค้า</h2>
+          
+          {message && (
+            <div className="mb-6 p-4 rounded-xl bg-green-100 text-green-800 text-center fade-in">
+              {message}
+            </div>
+          )}
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {products.map((p) => (
+              <ProductCard key={p.id} product={p} onAddToCart={addToCart} />
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      </section>
     </div>
   );
 };

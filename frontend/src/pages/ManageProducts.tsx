@@ -67,35 +67,50 @@ export default function ManageProducts() {
   // Role checking is handled by ProtectedRoute component, so we don't need to check it here
 
   return (
-    <div className="pt-20 px-6">
-      {/* <h2 className="text-2xl font-bold mb-4">Manage Products</h2> */}
+    <div className="pt-20 bg-cafe-background min-h-screen">
       <Navbar />
 
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Manage Products</h2>
-        <button
-          className="bg-green-600 text-white px-4 py-2 rounded"
-          onClick={() => setIsCreateModalOpen(true)}
-        >
-          + Add Product
-        </button>
-      </div>
+      <section className="cafe-section">
+        <div className="cafe-container">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="cafe-heading">จัดการสินค้า</h2>
+            <button
+              className="btn-cafe flex items-center"
+              onClick={() => setIsCreateModalOpen(true)}
+            >
+              <span className="mr-2">+</span> เพิ่มสินค้า
+            </button>
+          </div>
 
-
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <div className="grid md:grid-cols-3 gap-8">
-          {products.map(product => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onEdit={handleEditProduct}
-              onDelete={handleDelete}
-            />
-          ))}
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cafe-primary"></div>
+            </div>
+          ) : products.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {products.map(product => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onEdit={handleEditProduct}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="cafe-card p-12 text-center">
+              <h3 className="cafe-subheading mb-4">ยังไม่มีสินค้า</h3>
+              <p className="cafe-text-light mb-6">เริ่มต้นด้วยการเพิ่มสินค้าชิ้นแรกของคุณ</p>
+              <button
+                className="btn-cafe"
+                onClick={() => setIsCreateModalOpen(true)}
+              >
+                เพิ่มสินค้า
+              </button>
+            </div>
+          )}
         </div>
-      )}
+      </section>
 
       {/* Edit Product Modal */}
       {isEditModalOpen && editingProduct && (
@@ -115,8 +130,6 @@ export default function ManageProducts() {
           onCreated={fetchProducts}
         />
       )}
-
-
     </div>
   );
 }

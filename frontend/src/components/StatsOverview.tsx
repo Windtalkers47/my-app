@@ -4,24 +4,26 @@ import axios from 'axios';
 
 
 const StatsOverview = ({ stats }: { stats: any }) => {
+  const statItems = [
+    { label: 'จำนวนผู้ใช้', value: stats.totalUsers, icon: '👥' },
+    { label: 'สินค้า', value: stats.totalProducts, icon: '☕' },
+    { label: 'การจอง', value: stats.totalBookings, icon: '📅' },
+    { label: 'รายได้', value: `฿${stats.totalRevenue}`, icon: '💰' },
+  ];
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <div className="bg-white rounded-2xl shadow p-4 shadow-lg rounded-xl overflow-hidden hover:scale-105 transition">
-        <h2 className="text-sm text-gray-500">จำนวนผู้ใช้</h2>
-        <p className="text-2xl font-semibold">{stats.totalUsers}</p>
-      </div>
-      <div className="bg-white rounded-2xl shadow p-4 shadow-lg rounded-xl overflow-hidden hover:scale-105 transition">
-        <h2 className="text-sm text-gray-500">สินค้า</h2>
-        <p className="text-2xl font-semibold">{stats.totalProducts}</p>
-      </div>
-      <div className="bg-white rounded-2xl shadow p-4 shadow-lg rounded-xl overflow-hidden hover:scale-105 transition">
-        <h2 className="text-sm text-gray-500">การจอง</h2>
-        <p className="text-2xl font-semibold">{stats.totalBookings}</p>
-      </div>
-      <div className="bg-white rounded-2xl shadow p-4 shadow-lg rounded-xl overflow-hidden hover:scale-105 transition">
-        <h2 className="text-sm text-gray-500">รายได้</h2>
-        <p className="text-2xl font-semibold">฿{stats.totalRevenue}</p>
-      </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {statItems.map((item, index) => (
+        <div 
+          key={index}
+          className="cafe-card p-6 text-center fade-in transform transition-all duration-300 hover:scale-105"
+          style={{ animationDelay: `${index * 0.1}s` }}
+        >
+          <div className="text-4xl mb-4">{item.icon}</div>
+          <h3 className="cafe-label mb-2">{item.label}</h3>
+          <p className="text-3xl font-bold text-cafe-primary">{item.value || 0}</p>
+        </div>
+      ))}
     </div>
   );
 };
